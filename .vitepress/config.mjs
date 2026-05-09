@@ -8,7 +8,8 @@ export default defineConfig({
     nav: [
       { text: 'Home', link: '/' },
       { text: 'Resume', link: '/resume' },
-      { text: 'Blog', link: '/blog/' }
+      { text: 'Blog', link: '/blog/' },
+      { text: '니케 공지사항', link: '/nikke-notice/' }
     ],
 
     sidebar: {
@@ -17,6 +18,14 @@ export default defineConfig({
           text: 'Recent Posts',
           items: [
             { text: '첫 번째 글', link: '/blog/hello-world' }
+          ]
+        }
+      ],
+      '/nikke-notice/': [
+        {
+          text: '공지사항 목록',
+          items: [
+            { text: '신규 업데이트 안내', link: '/nikke-notice/sample-notice' }
           ]
         }
       ]
