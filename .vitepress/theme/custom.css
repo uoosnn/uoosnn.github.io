@@ -1,0 +1,58 @@
+/* 6:3:1 배색 비율 (Base 60%, Secondary 30%, Point 10%) 적용 */
+
+:root {
+  /* 60% Base: White & Clean Soft Gray */
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-soft: #f8fafc;
+  --vp-c-bg-alt: #f1f5f9;
+
+  /* 30% Secondary: Trustworthy Blue */
+  --vp-c-brand-1: #2563eb; /* Primary Blue */
+  --vp-c-brand-2: #1d4ed8; /* Darker Blue (Hover) */
+  --vp-c-brand-3: #1e40af; /* Deepest Blue */
+  --vp-c-brand-soft: rgba(37, 99, 235, 0.14);
+
+  /* 10% Point: Vibrant Orange (Blue의 보색으로 눈에 띄는 포인트) */
+  --point-color: #f97316;
+  --point-color-hover: #ea580c;
+}
+
+/* 다크 모드에서의 배색 (다크 모드를 켤 경우를 대비) */
+.dark {
+  --vp-c-bg: #0f172a;
+  --vp-c-bg-soft: #1e293b;
+  --vp-c-bg-alt: #334155;
+
+  --vp-c-brand-1: #3b82f6;
+  --vp-c-brand-2: #60a5fa;
+  --vp-c-brand-3: #93c5fd;
+  --vp-c-brand-soft: rgba(59, 130, 246, 0.16);
+}
+
+/* ----------------------------------------------------
+   10% Point Color 적용 요소들
+   ---------------------------------------------------- */
+
+/* 메인 화면(Hero)의 서브 버튼(Alt)에 포인트 컬러 적용 */
+.VPHero .VPButton.alt {
+  background-color: var(--point-color);
+  color: white;
+  border-color: var(--point-color);
+}
+
+.VPHero .VPButton.alt:hover {
+  background-color: var(--point-color-hover);
+  border-color: var(--point-color-hover);
+  color: white;
+}
+
+/* 본문 내의 하이퍼링크에 마우스를 올렸을 때 포인트 컬러 사용 */
+.vp-doc a:hover {
+  color: var(--point-color);
+  text-decoration-color: var(--point-color);
+}
+
+/* 블로그 목록 등의 커스텀 링크 포인트 */
+.vp-doc ul li a:hover {
+  color: var(--point-color);
+}
