@@ -8,11 +8,32 @@ function getBlogSidebar() {
   
   const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.md') && file !== 'index.md')
   
-  // 수정 시간(mtimeMs) 기준으로 내림차순 정렬 (최신 글이 먼저 오도록)
+  // 프론트매터의 date 기준으로 내림차순 정렬 (최신 글이 먼저 오도록)
   const sortedFiles = files.map(file => {
-    const stat = fs.statSync(path.join(blogDir, file))
-    return { file, time: stat.mtimeMs }
-  }).sort((a, b) => b.time - a.time).map(item => item.file)
+    const filePath = path.join(blogDir, file)
+    const content = fs.readFileSync(filePath, 'utf-8')
+    let time = 0
+    
+    const dateMatch = content.match(/date:\s*([^\n]+)/)
+    if (dateMatch && dateMatch[1]) {
+      const parsedTime = new Date(dateMatch[1].trim()).getTime()
+      if (!isNaN(parsedTime)) {
+        time = parsedTime
+      }
+    }
+    
+    const stat = fs.statSync(filePath)
+    
+    // date 필드가 없거나 파싱 실패 시 파일 생성/수정 시간으로 대체
+    if (!time) {
+      time = stat.mtimeMs
+    }
+    
+    return { file, time, mtimeMs: stat.mtimeMs }
+  }).sort((a, b) => {
+    if (b.time !== a.time) return b.time - a.time
+    return b.mtimeMs - a.mtimeMs
+  }).map(item => item.file)
   
   return sortedFiles.map(file => {
     const name = file.replace(/\.md$/, '')
