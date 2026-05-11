@@ -8,11 +8,14 @@ function getBlogSidebar() {
   
   const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.md') && file !== 'index.md')
   
-  return files.map(file => {
-    // 파일명에서 확장자 제거
+  // 수정 시간(mtimeMs) 기준으로 내림차순 정렬 (최신 글이 먼저 오도록)
+  const sortedFiles = files.map(file => {
+    const stat = fs.statSync(path.join(blogDir, file))
+    return { file, time: stat.mtimeMs }
+  }).sort((a, b) => b.time - a.time).map(item => item.file)
+  
+  return sortedFiles.map(file => {
     const name = file.replace(/\.md$/, '')
-    // 파일 내용을 읽어서 title 추출 시도 (선택적)
-    // 여기서는 간단히 파일명을 그대로 노출
     return { text: name, link: `/blog/${name}` }
   })
 }
