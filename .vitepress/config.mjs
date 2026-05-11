@@ -41,7 +41,6 @@ export default defineConfig({
             {
               text: 'Recent Posts',
               items: [
-                { text: '첫 번째 글', link: '/blog/hello-world' },
                 ...getBlogSidebar()
               ]
             }
@@ -64,7 +63,6 @@ export default defineConfig({
             {
               text: 'Recent Posts',
               items: [
-                { text: 'First Post', link: '/blog/hello-world' },
                 ...getBlogSidebar()
               ]
             }
@@ -87,7 +85,6 @@ export default defineConfig({
             {
               text: 'Recent Posts',
               items: [
-                { text: '最初の記事', link: '/blog/hello-world' },
                 ...getBlogSidebar()
               ]
             }
