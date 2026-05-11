@@ -44,4 +44,4 @@
 * **Email**: wsj2681@naver.com / uoosnn@gmail.com
 * **GitHub (Main)**: [https://github.com/wsj2681](https://github.com/wsj2681)
 * **GitHub (Sub)**: [https://github.com/uoosnn](https://github.com/uoosnn)
-* **Notion**: [https://www.notion.so/Dodo-7889b6e44189ac31b55103d5c0a00421](https://www.notion.so/Dodo-7889b6e44189ac31b55103d5c0a00421)
+* **Notion**: [https://scarce-amaryllis-010.notion.site/e351e2512d5b42848b70be48e00e21a6?v=fe7cfa9d100e4aafb5933a4e48a8d238&p=c69a59885937481199c4619500962bee&pm=s](https://scarce-amaryllis-010.notion.site/e351e2512d5b42848b70be48e00e21a6?v=fe7cfa9d100e4aafb5933a4e48a8d238&p=c69a59885937481199c4619500962bee&pm=s)

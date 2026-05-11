@@ -24,38 +24,83 @@ export default defineConfig({
   title: "Uoosnn",
   description: "Software Engineer Portfolio & Blog",
   head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
-  themeConfig: {
-    nav: [
-      { text: 'Home', link: '/' },
-      { text: 'Resume', link: '/resume' },
-      { text: 'Blog', link: '/blog/' },
-      { text: '니케 공지사항', link: '/nikke-notice/' }
-    ],
-
-    sidebar: {
-      '/blog/': [
-        {
-          text: 'Recent Posts',
-          items: [
-            { text: '첫 번째 글', link: '/blog/hello-world' },
-            ...getBlogSidebar()
+  
+  // 다국어 설정
+  locales: {
+    root: {
+      label: '🇰🇷 KO',
+      lang: 'ko',
+      themeConfig: {
+        nav: [
+          { text: 'Home', link: '/' },
+          { text: 'Resume', link: '/resume' },
+          { text: 'Blog', link: '/blog/' }
+        ],
+        sidebar: {
+          '/blog/': [
+            {
+              text: 'Recent Posts',
+              items: [
+                { text: '첫 번째 글', link: '/blog/hello-world' },
+                ...getBlogSidebar()
+              ]
+            }
           ]
         }
-      ],
-      '/nikke-notice/': [
-        {
-          text: '공지사항 목록',
-          items: [
-            { text: '신규 업데이트 안내', link: '/nikke-notice/sample-notice' }
-          ]
-        }
-      ]
+      }
     },
+    en: {
+      label: '🇺🇸 EN',
+      lang: 'en',
+      link: '/en/',
+      themeConfig: {
+        nav: [
+          { text: 'Home', link: '/en/' },
+          { text: 'Resume', link: '/en/resume' },
+          { text: 'Blog', link: '/blog/' }
+        ],
+        sidebar: {
+          '/blog/': [
+            {
+              text: 'Recent Posts',
+              items: [
+                { text: 'First Post', link: '/blog/hello-world' },
+                ...getBlogSidebar()
+              ]
+            }
+          ]
+        }
+      }
+    },
+    ja: {
+      label: '🇯🇵 JP',
+      lang: 'ja',
+      link: '/ja/',
+      themeConfig: {
+        nav: [
+          { text: 'Home', link: '/ja/' },
+          { text: 'Resume', link: '/ja/resume' },
+          { text: 'Blog', link: '/blog/' }
+        ],
+        sidebar: {
+          '/blog/': [
+            {
+              text: 'Recent Posts',
+              items: [
+                { text: '最初の記事', link: '/blog/hello-world' },
+                ...getBlogSidebar()
+              ]
+            }
+          ]
+        }
+      }
+    }
+  },
 
+  themeConfig: {
     socialLinks: [
       { icon: 'github', link: 'https://github.com/uoosnn' }
     ],
-    
     footer: {
       message: 'Built with VitePress.',
       copyright: 'Copyright © 2026 Uoosnn'
