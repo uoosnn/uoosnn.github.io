@@ -56,3 +56,9 @@
 .vp-doc ul li a:hover {
   color: var(--point-color);
 }
+
+/* 메인 화면(Hero) 텍스트 영역 너비 확장 (텍스트 줄바꿈 방지) */
+.VPHero .name,
+.VPHero .text {
+  max-width: 800px !important;
+}
