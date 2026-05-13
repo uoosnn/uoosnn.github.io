@@ -2,8 +2,13 @@ import { defineConfig } from 'vitepress'
 import fs from 'fs'
 import path from 'path'
 
-function getBlogSidebar() {
-  const blogDir = path.resolve('./blog')
+/**
+ * 지정된 디렉토리에서 블로그 사이드바 목록을 생성합니다.
+ * @param {string} dir - 블로그 마크다운 파일이 있는 디렉토리 (예: './blog', './en/blog')
+ * @param {string} urlPrefix - URL 경로 접두사 (예: '/blog', '/en/blog')
+ */
+function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
+  const blogDir = path.resolve(dir)
   if (!fs.existsSync(blogDir)) return []
   
   const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.md') && file !== 'index.md')
@@ -37,7 +42,7 @@ function getBlogSidebar() {
   
   return sortedFiles.map(file => {
     const name = file.replace(/\.md$/, '')
-    return { text: name, link: `/blog/${name}` }
+    return { text: name, link: `${urlPrefix}/${name}` }
   })
 }
 
@@ -62,7 +67,7 @@ export default defineConfig({
             {
               text: 'Recent Posts',
               items: [
-                ...getBlogSidebar()
+                ...getBlogSidebar('./blog', '/blog')
               ]
             }
           ]
@@ -77,14 +82,14 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
-          { text: 'Blog', link: '/blog/' }
+          { text: 'Blog', link: '/en/blog/' }
         ],
         sidebar: {
-          '/blog/': [
+          '/en/blog/': [
             {
               text: 'Recent Posts',
               items: [
-                ...getBlogSidebar()
+                ...getBlogSidebar('./en/blog', '/en/blog')
               ]
             }
           ]
@@ -99,14 +104,14 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
-          { text: 'Blog', link: '/blog/' }
+          { text: 'Blog', link: '/ja/blog/' }
         ],
         sidebar: {
-          '/blog/': [
+          '/ja/blog/': [
             {
               text: 'Recent Posts',
               items: [
-                ...getBlogSidebar()
+                ...getBlogSidebar('./ja/blog', '/ja/blog')
               ]
             }
           ]
