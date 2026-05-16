@@ -106,6 +106,7 @@ async function generateRSSFeed(config) {
 export default defineConfig({
   title: "Uoosnn",
   description: "Software Engineer Portfolio & Blog",
+  cleanUrls: true,
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
