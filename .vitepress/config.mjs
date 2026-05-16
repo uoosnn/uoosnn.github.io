@@ -123,8 +123,7 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
-          { text: 'Blog', link: '/blog/' },
-          { text: '📡 RSS', link: 'https://uoosnn.github.io/feed.xml' }
+          { text: 'Blog', link: '/blog/' }
         ],
         sidebar: {
           '/blog/': [
@@ -146,8 +145,7 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
-          { text: 'Blog', link: '/en/blog/' },
-          { text: '📡 RSS', link: 'https://uoosnn.github.io/en/feed.xml' }
+          { text: 'Blog', link: '/en/blog/' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -169,8 +167,7 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
-          { text: 'Blog', link: '/ja/blog/' },
-          { text: '📡 RSS', link: 'https://uoosnn.github.io/ja/feed.xml' }
+          { text: 'Blog', link: '/ja/blog/' }
         ],
         sidebar: {
           '/ja/blog/': [
@@ -191,7 +188,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/uoosnn' }
     ],
     footer: {
-      message: 'Built with VitePress.',
+      message: 'Built with VitePress. | 📡 <a href="https://uoosnn.github.io/feed.xml" target="_blank">RSS Feed</a>',
       copyright: 'Copyright © 2026 Uoosnn'
     }
   }
