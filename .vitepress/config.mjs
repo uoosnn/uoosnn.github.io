@@ -111,6 +111,11 @@ export default defineConfig({
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
   ],
   
+  // sitemap 자동 생성 (Google Search Console 등록용)
+  sitemap: {
+    hostname: 'https://uoosnn.github.io'
+  },
+  
   // 빌드 완료 후 RSS 피드 생성
   buildEnd: generateRSSFeed,
   
