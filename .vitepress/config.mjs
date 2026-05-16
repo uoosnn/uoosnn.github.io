@@ -109,6 +109,9 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
+    // Google Analytics (GA4)
+    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-Y22Y38DLKM' }],
+    ['script', {}, "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-Y22Y38DLKM');"],
   ],
   
   // sitemap 자동 생성 (Google Search Console 등록용)
