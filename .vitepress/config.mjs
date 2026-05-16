@@ -98,8 +98,8 @@ async function generateRSSFeed(config) {
       ? path.join(config.outDir, prefix)
       : config.outDir
     mkdirSync(outDir, { recursive: true })
-    writeFileSync(path.join(outDir, 'feed.rss'), feed.rss2())
-    console.log(`✅ RSS 피드 생성 완료: ${prefix || '/'}/feed.rss`)
+    writeFileSync(path.join(outDir, 'feed.xml'), feed.rss2())
+    console.log(`✅ RSS 피드 생성 완료: ${prefix || '/'}/feed.xml`)
   }
 }
 
@@ -108,7 +108,7 @@ export default defineConfig({
   description: "Software Engineer Portfolio & Blog",
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
-    ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.rss' }],
+    ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
   ],
   
   // 빌드 완료 후 RSS 피드 생성
@@ -124,7 +124,7 @@ export default defineConfig({
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
           { text: 'Blog', link: '/blog/' },
-          { text: '📡 RSS', link: 'https://uoosnn.github.io/feed.rss' }
+          { text: '📡 RSS', link: 'https://uoosnn.github.io/feed.xml' }
         ],
         sidebar: {
           '/blog/': [
@@ -147,7 +147,7 @@ export default defineConfig({
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
           { text: 'Blog', link: '/en/blog/' },
-          { text: '📡 RSS', link: 'https://uoosnn.github.io/en/feed.rss' }
+          { text: '📡 RSS', link: 'https://uoosnn.github.io/en/feed.xml' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -170,7 +170,7 @@ export default defineConfig({
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
           { text: 'Blog', link: '/ja/blog/' },
-          { text: '📡 RSS', link: 'https://uoosnn.github.io/ja/feed.rss' }
+          { text: '📡 RSS', link: 'https://uoosnn.github.io/ja/feed.xml' }
         ],
         sidebar: {
           '/ja/blog/': [
