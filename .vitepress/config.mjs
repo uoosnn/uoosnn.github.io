@@ -131,7 +131,8 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
-          { text: 'Blog', link: '/blog/' }
+          { text: 'Blog', link: '/blog/' },
+          { text: 'Tech', link: '/tech/' }
         ],
         sidebar: {
           '/blog/': [
@@ -139,6 +140,14 @@ export default defineConfig({
               text: 'Recent Posts',
               items: [
                 ...getBlogSidebar('./blog', '/blog')
+              ]
+            }
+          ],
+          '/tech/': [
+            {
+              text: 'Technical Articles',
+              items: [
+                ...getBlogSidebar('./tech', '/tech')
               ]
             }
           ]
@@ -153,7 +162,8 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
-          { text: 'Blog', link: '/en/blog/' }
+          { text: 'Blog', link: '/en/blog/' },
+          { text: 'Tech', link: '/en/tech/' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -161,6 +171,14 @@ export default defineConfig({
               text: 'Recent Posts',
               items: [
                 ...getBlogSidebar('./en/blog', '/en/blog')
+              ]
+            }
+          ],
+          '/en/tech/': [
+            {
+              text: 'Technical Articles',
+              items: [
+                ...getBlogSidebar('./en/tech', '/en/tech')
               ]
             }
           ]
@@ -175,7 +193,8 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
-          { text: 'Blog', link: '/ja/blog/' }
+          { text: 'Blog', link: '/ja/blog/' },
+          { text: 'Tech', link: '/ja/tech/' }
         ],
         sidebar: {
           '/ja/blog/': [
@@ -183,6 +202,14 @@ export default defineConfig({
               text: 'Recent Posts',
               items: [
                 ...getBlogSidebar('./ja/blog', '/ja/blog')
+              ]
+            }
+          ],
+          '/ja/tech/': [
+            {
+              text: 'Technical Articles',
+              items: [
+                ...getBlogSidebar('./ja/tech', '/ja/tech')
               ]
             }
           ]
