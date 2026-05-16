@@ -124,7 +124,7 @@ export default defineConfig({
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
           { text: 'Blog', link: '/blog/' },
-          { text: '📡 RSS', link: '/feed.rss' }
+          { text: '📡 RSS', link: 'https://uoosnn.github.io/feed.rss' }
         ],
         sidebar: {
           '/blog/': [
@@ -147,7 +147,7 @@ export default defineConfig({
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
           { text: 'Blog', link: '/en/blog/' },
-          { text: '📡 RSS', link: '/en/feed.rss' }
+          { text: '📡 RSS', link: 'https://uoosnn.github.io/en/feed.rss' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -170,7 +170,7 @@ export default defineConfig({
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
           { text: 'Blog', link: '/ja/blog/' },
-          { text: '📡 RSS', link: '/ja/feed.rss' }
+          { text: '📡 RSS', link: 'https://uoosnn.github.io/ja/feed.rss' }
         ],
         sidebar: {
           '/ja/blog/': [
