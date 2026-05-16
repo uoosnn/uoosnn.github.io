@@ -1,6 +1,10 @@
-import { defineConfig } from 'vitepress'
+import { defineConfig, createContentLoader } from 'vitepress'
+import { Feed } from 'feed'
+import { writeFileSync, mkdirSync } from 'fs'
 import fs from 'fs'
 import path from 'path'
+
+const SITE_URL = 'https://uoosnn.github.io'
 
 /**
  * 지정된 디렉토리에서 블로그 사이드바 목록을 생성합니다.
@@ -46,10 +50,69 @@ function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
   })
 }
 
+/**
+ * VitePress 빌드 완료 후 3개 언어별 RSS 피드를 자동 생성합니다.
+ */
+async function generateRSSFeed(config) {
+  const feedConfigs = [
+    { pattern: 'blog/*.md',    lang: 'ko', prefix: '',    title: 'Uoosnn Blog' },
+    { pattern: 'en/blog/*.md', lang: 'en', prefix: '/en', title: 'Uoosnn Blog (EN)' },
+    { pattern: 'ja/blog/*.md', lang: 'ja', prefix: '/ja', title: 'Uoosnn Blog (JA)' },
+  ]
+
+  for (const { pattern, lang, prefix, title } of feedConfigs) {
+    const feed = new Feed({
+      title,
+      description: 'Software Engineer Portfolio & Blog',
+      id: `${SITE_URL}${prefix}/`,
+      link: `${SITE_URL}${prefix}/`,
+      language: lang,
+      copyright: 'Copyright © 2026 Uoosnn',
+    })
+
+    let posts = []
+    try {
+      posts = await createContentLoader(pattern, {
+        excerpt: true,
+        render: true,
+      }).load()
+    } catch (e) {
+      console.warn(`RSS: ${pattern} 로드 실패, 건너뜁니다.`)
+      continue
+    }
+
+    posts
+      .filter(p => !p.url.endsWith('/blog/') && p.url !== '/blog/')
+      .sort((a, b) => +new Date(b.frontmatter?.date || 0) - +new Date(a.frontmatter?.date || 0))
+      .forEach(({ url, frontmatter, html }) => {
+        feed.addItem({
+          title: frontmatter?.title || url,
+          id: `${SITE_URL}${url}`,
+          link: `${SITE_URL}${url}`,
+          content: html || '',
+          date: new Date(frontmatter?.date || Date.now()),
+        })
+      })
+
+    const outDir = prefix
+      ? path.join(config.outDir, prefix)
+      : config.outDir
+    mkdirSync(outDir, { recursive: true })
+    writeFileSync(path.join(outDir, 'feed.rss'), feed.rss2())
+    console.log(`✅ RSS 피드 생성 완료: ${prefix || '/'}/feed.rss`)
+  }
+}
+
 export default defineConfig({
   title: "Uoosnn",
   description: "Software Engineer Portfolio & Blog",
-  head: [['link', { rel: 'icon', href: '/favicon.ico' }]],
+  head: [
+    ['link', { rel: 'icon', href: '/favicon.ico' }],
+    ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.rss' }],
+  ],
+  
+  // 빌드 완료 후 RSS 피드 생성
+  buildEnd: generateRSSFeed,
   
   // 다국어 설정
   locales: {
@@ -60,7 +123,8 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
-          { text: 'Blog', link: '/blog/' }
+          { text: 'Blog', link: '/blog/' },
+          { text: '📡 RSS', link: '/feed.rss' }
         ],
         sidebar: {
           '/blog/': [
@@ -82,7 +146,8 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
-          { text: 'Blog', link: '/en/blog/' }
+          { text: 'Blog', link: '/en/blog/' },
+          { text: '📡 RSS', link: '/en/feed.rss' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -104,7 +169,8 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
-          { text: 'Blog', link: '/ja/blog/' }
+          { text: 'Blog', link: '/ja/blog/' },
+          { text: '📡 RSS', link: '/ja/feed.rss' }
         ],
         sidebar: {
           '/ja/blog/': [
