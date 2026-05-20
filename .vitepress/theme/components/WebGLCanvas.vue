@@ -26,71 +26,64 @@ onMounted(() => {
 
   // TODO: Add your WebGL rendering code here!
   // This is a basic template to get you started.\
+  // 1. 버텍스 셰이더 수정 (이동을 위한 uTranslation 변수 추가)
   const vsSource = `
     attribute vec4 aVertexPosition;
-    attribute vec4 aVertexColor;
-    varying vec4 vColor;
-    void main(){
-    gl_Position=aVertexPosition;vColor=aVertexColor;
-  }`;
-
-  const fsSource = `
-  void main(){
-    gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0);
-  }
-  `;
-  function compileShader(gl, type, source) {
-    const shader = gl.createShader(type);
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-
-    // 컴파일 에러 체크 (시스템 엔지니어에게 필수적인 에러 로깅)
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.error("Shader compile error:", gl.getShaderInfoLog(shader));
-      gl.deleteShader(shader);
-      return null;
+    uniform vec2 uTranslation; // JS에서 매 프레임마다 위치 값을 받을 변수(Uniform)
+    
+    void main() {
+      // 기존 정점 위치에 uTranslation 값을 더해서 이동시킵니다.
+      gl_Position = aVertexPosition + vec4(uTranslation, 0.0, 0.0);
     }
-    return shader;
-  }
+  `;
 
-  // 셰이더 생성
-  const vertexShader = compileShader(gl, gl.VERTEX_SHADER, vsSource);
-  const fragmentShader = compileShader(gl, gl.FRAGMENT_SHADER, fsSource);
+  // 픽셀(Fragment) 셰이더는 기존과 동일하게 오렌지색 유지
+  const fsSource = `
+    void main() {
+      gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0); 
+    }
+  `;
 
-  // 3. WebGL 프로그램 생성 및 링크
-  const shaderProgram = gl.createProgram();
-  gl.attachShader(shaderProgram, vertexShader);
-  gl.attachShader(shaderProgram, fragmentShader);
-  gl.linkProgram(shaderProgram);
-  gl.useProgram(shaderProgram);
+  // ... (2. 셰이더 컴파일, 3. 프로그램 생성, 4. 버텍스 데이터 세팅은 이전 코드와 완전히 동일) ...
 
-  // 4. 버텍스 데이터 준비 (삼각형의 3개 점 좌표: x, y)
-  const vertices = new Float32Array([
-    0.0,
-    0.5, // 위쪽 꼭짓점
-    -0.5,
-    -0.5, // 왼쪽 아래 꼭짓점
-    0.5,
-    -0.5, // 오른쪽 아래 꼭짓점
-  ]);
-
-  // GPU 메모리에 버퍼 생성 및 데이터 전송
-  const vertexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-  // 5. 메모리와 셰이더 변수 연결
+  // 5. 메모리와 셰이더 변수 연결 (Attribute & Uniform)
   const positionAttributeLocation = gl.getAttribLocation(
     shaderProgram,
     "aVertexPosition",
   );
   gl.enableVertexAttribArray(positionAttributeLocation);
-
-  // 어떻게 데이터를 읽을지 지시 (2개씩(x,y), Float 타입으로)
   gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-  // 6. 드로우 콜 (화면에 그리기 실행!)
-  gl.drawArrays(gl.TRIANGLES, 0, 3);
+  // 새로 추가된 uTranslation 변수의 메모리 위치를 찾습니다.
+  const translationLocation = gl.getUniformLocation(
+    shaderProgram,
+    "uTranslation",
+  );
+
+  // 6. 렌더링 루프 (애니메이션의 심장)
+  let time = 0;
+
+  function render() {
+    // A. 화면 지우기 (매 프레임마다 이전 프레임의 잔상을 지워야 함)
+    gl.clearColor(0.1, 0.1, 0.15, 1.0);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+
+    // B. 로직 업데이트 (시간에 따라 좌우로 움직이는 값 계산)
+    time += 0.05; // 애니메이션 속도 조절
+    const xOffset = Math.sin(time) * 0.5; // sin 함수를 써서 -0.5 ~ 0.5 사이를 왕복
+
+    // C. 계산된 위치값을 GPU(셰이더)로 쏴주기
+    gl.uniform2f(translationLocation, xOffset, 0.0);
+
+    // D. 드로우 콜 (화면에 그리기)
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+    // E. 다음 프레임 예약 (모니터 주사율에 맞춰서 이 함수를 무한 반복)
+    requestAnimationFrame(render);
+  }
+
+  // 루프 최초 실행!
+  render();
 });
 </script>
 
