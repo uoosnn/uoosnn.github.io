@@ -14,15 +14,15 @@ const SITE_URL = 'https://uoosnn.github.io'
 function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
   const blogDir = path.resolve(dir)
   if (!fs.existsSync(blogDir)) return []
-  
+
   const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.md') && file !== 'index.md')
-  
+
   // 프론트매터의 date 기준으로 내림차순 정렬 (최신 글이 먼저 오도록)
   const sortedFiles = files.map(file => {
     const filePath = path.join(blogDir, file)
     const content = fs.readFileSync(filePath, 'utf-8')
     let time = 0
-    
+
     const dateMatch = content.match(/date:\s*([^\n]+)/)
     if (dateMatch && dateMatch[1]) {
       const parsedTime = new Date(dateMatch[1].trim()).getTime()
@@ -30,20 +30,20 @@ function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
         time = parsedTime
       }
     }
-    
+
     const stat = fs.statSync(filePath)
-    
+
     // date 필드가 없거나 파싱 실패 시 파일 생성/수정 시간으로 대체
     if (!time) {
       time = stat.mtimeMs
     }
-    
+
     return { file, time, mtimeMs: stat.mtimeMs }
   }).sort((a, b) => {
     if (b.time !== a.time) return b.time - a.time
     return b.mtimeMs - a.mtimeMs
   }).map(item => item.file)
-  
+
   return sortedFiles.map(file => {
     const name = file.replace(/\.md$/, '')
     return { text: name, link: `${urlPrefix}/${name}` }
@@ -55,7 +55,7 @@ function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
  */
 async function generateRSSFeed(config) {
   const feedConfigs = [
-    { pattern: 'blog/*.md',    lang: 'ko', prefix: '',    title: 'Uoosnn Blog' },
+    { pattern: 'blog/*.md', lang: 'ko', prefix: '', title: 'Uoosnn Blog' },
     { pattern: 'en/blog/*.md', lang: 'en', prefix: '/en', title: 'Uoosnn Blog (EN)' },
     { pattern: 'ja/blog/*.md', lang: 'ja', prefix: '/ja', title: 'Uoosnn Blog (JA)' },
   ]
@@ -114,15 +114,15 @@ export default defineConfig({
     ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-Y22Y38DLKM' }],
     ['script', {}, "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-Y22Y38DLKM');"],
   ],
-  
+
   // sitemap 자동 생성 (Google Search Console 등록용)
   sitemap: {
     hostname: 'https://uoosnn.github.io'
   },
-  
+
   // 빌드 완료 후 RSS 피드 생성
   buildEnd: generateRSSFeed,
-  
+
   // 다국어 설정
   locales: {
     root: {
