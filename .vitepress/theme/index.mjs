@@ -1,6 +1,7 @@
 import DefaultTheme from 'vitepress/theme'
 import './custom.css'
 import GiscusComment from './components/GiscusComment.vue'
+import WebGLCanvas from './components/WebGLCanvas.vue'
 import { useRoute, useData } from 'vitepress'
 import { h } from 'vue'
 
@@ -21,5 +22,8 @@ export default {
         return null
       }
     })
+  },
+  enhanceApp({ app }) {
+    app.component('WebGLCanvas', WebGLCanvas)
   }
 }
