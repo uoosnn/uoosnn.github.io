@@ -1,4 +1,3 @@
-yaml
 ---
 title: "로그 없는 아파치 SSL 오류, strace로 분석한 트러블슈팅"
 date: 2026-05-21
@@ -40,7 +39,7 @@ read(206, "\n", 1)
 ### 2. 개인키 파일 로딩
 
 ```c
-open("/etc/httpd/ssl_2026/mkgolf-mall.mk.co.kr/key.pem", O_RDONLY) = 203
+open("/etc/httpd/ssl/key.pem", O_RDONLY) = 203
 read(203, "-----BEGIN RSA PRIVATE KEY-----\r"..., 4096) = 1781
 ```
 

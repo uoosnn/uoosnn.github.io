@@ -1,4 +1,3 @@
-yaml
 ---
 title: "ログなしApache SSLエラー、straceで分析したトラブルシューティング"
 date: 2026-05-21
@@ -40,7 +39,7 @@ read(206, "\n", 1)
 ### 2. 秘密鍵ファイルのロード
 
 ```c
-open("/etc/httpd/ssl_2026/mkgolf-mall.mk.co.kr/key.pem", O_RDONLY) = 203
+open("/etc/httpd/ssl/key.pem", O_RDONLY) = 203
 read(203, "-----BEGIN RSA PRIVATE KEY-----\r"..., 4096) = 1781
 ```
 

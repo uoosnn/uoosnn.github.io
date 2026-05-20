@@ -1,4 +1,3 @@
-yaml
 ---
 title: "Apache SSL Error Without Logs: Troubleshooting with strace"
 date: 2026-05-21
@@ -40,7 +39,7 @@ In the initial part of the log, Apache created a child process via `pipe` and `c
 ### 2. Private Key File Loading
 
 ```c
-open("/etc/httpd/ssl_2026/mkgolf-mall.mk.co.kr/key.pem", O_RDONLY) = 203
+open("/etc/httpd/ssl/key.pem", O_RDONLY) = 203
 read(203, "-----BEGIN RSA PRIVATE KEY-----\r"..., 4096) = 1781
 ```
 
