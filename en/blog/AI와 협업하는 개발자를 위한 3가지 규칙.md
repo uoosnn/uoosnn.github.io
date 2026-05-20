@@ -1,4 +1,3 @@
-yaml
 ---
 title: "3 Rules for Developers Collaborating with AI"
 date: 2026-05-20
