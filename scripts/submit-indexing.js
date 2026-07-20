@@ -42,18 +42,24 @@ async function main() {
     console.log(`Found ${urls.length} URLs in sitemap.xml.`);
 
     // 4. Authenticate with Google API
-    const jwtClient = new google.auth.JWT(
-      credentials.client_email,
-      null,
-      credentials.private_key,
-      ['https://www.googleapis.com/auth/indexing'],
-      null
-    );
+    if (!credentials.client_email || !credentials.private_key) {
+      console.error('Error: Parsed JSON does not contain client_email or private_key.');
+      console.error('Keys found in JSON:', Object.keys(credentials).join(', '));
+      process.exit(1);
+    }
 
-    await jwtClient.authorize();
+    const auth = new google.auth.GoogleAuth({
+      credentials: {
+        client_email: credentials.client_email,
+        private_key: credentials.private_key,
+      },
+      scopes: ['https://www.googleapis.com/auth/indexing'],
+    });
+
+    const authClient = await auth.getClient();
     const indexing = google.indexing({
       version: 'v3',
-      auth: jwtClient,
+      auth: authClient,
     });
 
     // 5. Submit URLs to Indexing API
