@@ -10,7 +10,9 @@
   },
   "devDependencies": {
     "feed": "^5.2.1",
+    "googleapis": "^173.0.0",
     "vitepress": "^1.2.2",
-    "vue": "^3.4.27"
+    "vue": "^3.4.27",
+    "xml2js": "^0.6.2"
   }
 }
