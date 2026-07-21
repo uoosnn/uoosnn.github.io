@@ -15,6 +15,10 @@ async function main() {
     let credentials;
     try {
       credentials = JSON.parse(serviceAccountKeyStr);
+      // GitHub Actions 등에서 newline(\n)이 이스케이프되는 문제 방지
+      if (credentials.private_key) {
+        credentials.private_key = credentials.private_key.replace(/\\n/g, '\n');
+      }
     } catch (e) {
       console.error('Error parsing GCP_SERVICE_ACCOUNT_KEY as JSON:', e);
       process.exit(1);
@@ -57,47 +61,61 @@ async function main() {
     });
 
     const authClient = await auth.getClient();
-    const indexing = google.indexing({
-      version: 'v3',
-      auth: authClient,
-    });
 
-    // 5. Submit URLs to Indexing API
+    // 5. Submit URLs to Indexing API using Batch Requests (Max 100 per batch)
+    const BATCH_SIZE = 100;
     let successCount = 0;
     let failCount = 0;
 
-    for (const url of urls) {
+    for (let i = 0; i < urls.length; i += BATCH_SIZE) {
+      const chunk = urls.slice(i, i + BATCH_SIZE);
+      console.log(`Sending batch ${Math.floor(i / BATCH_SIZE) + 1} (${chunk.length} URLs)...`);
+      
+      const boundary = 'batch_boundary';
+      let body = '';
+      
+      // Construct multipart/mixed body
+      chunk.forEach((url, index) => {
+        const payload = JSON.stringify({ url: url, type: 'URL_UPDATED' });
+        body += `--${boundary}\r\n`;
+        body += `Content-Type: application/http\r\n`;
+        body += `Content-ID: <item${index}>\r\n\r\n`;
+        body += `POST /v3/urlNotifications:publish HTTP/1.1\r\n`;
+        body += `Content-Type: application/json\r\n`;
+        body += `Content-Length: ${Buffer.byteLength(payload)}\r\n\r\n`;
+        body += `${payload}\r\n`;
+      });
+      body += `--${boundary}--\r\n`;
+
       try {
-        const res = await indexing.urlNotifications.publish({
-          requestBody: {
-            url: url,
-            type: 'URL_UPDATED',
+        const res = await authClient.request({
+          url: 'https://indexing.googleapis.com/batch',
+          method: 'POST',
+          headers: {
+            'Content-Type': `multipart/mixed; boundary=${boundary}`
           },
+          data: body
         });
+
         if (res.status === 200) {
-          successCount++;
-          console.log(`[OK] Indexed: ${url}`);
+          successCount += chunk.length;
+          console.log(`[OK] Batch ${Math.floor(i / BATCH_SIZE) + 1} accepted.`);
         } else {
-          failCount++;
-          console.error(`[WARN] Failed to index: ${url} (Status: ${res.status})`);
+          failCount += chunk.length;
+          console.error(`[WARN] Batch ${Math.floor(i / BATCH_SIZE) + 1} failed with status: ${res.status}`);
         }
       } catch (error) {
-        failCount++;
-        if (error.response) {
-          console.error(`[ERROR] Failed to index: ${url} - ${error.response.status} ${error.response.statusText}`);
-          if (error.response.data && error.response.data.error) {
-            console.error(error.response.data.error.message);
-          }
-        } else {
-          console.error(`[ERROR] Failed to index: ${url} - ${error.message}`);
-        }
+        failCount += chunk.length;
+        console.error(`[ERROR] Batch request failed: ${error.message}`);
       }
-      
-      // Sleep a bit to avoid rate limits
-      await new Promise(resolve => setTimeout(resolve, 100));
     }
 
-    console.log(`\nIndexing complete. Success: ${successCount}, Fail: ${failCount}`);
+    console.log(`\nIndexing complete. Success (Received by API): ${successCount}, Fail: ${failCount}`);
+    
+    if (urls.length > 200) {
+      console.warn('\n[Warning] Google Indexing API default daily quota is 200 requests.');
+      console.warn('You submitted more than 200 URLs. Some URLs may not be processed by Google.');
+    }
 
   } catch (err) {
     console.error('Unhandled error during indexing:', err);
