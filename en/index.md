@@ -11,7 +11,10 @@ hero:
       link: /en/resume
     - theme: alt
       text: Go to Blog
-      link: /blog/
+      link: /en/blog/
+    - theme: alt
+      text: Tech Blog
+      link: /en/tech/
 
 features:
   - title: System Engineer

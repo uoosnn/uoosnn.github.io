@@ -12,6 +12,9 @@ hero:
     - theme: alt
       text: 블로그 바로가기
       link: /blog/
+    - theme: alt
+      text: 기술블로그 바로가기
+      link: /tech/
 
 features:
   - title: System Engineer

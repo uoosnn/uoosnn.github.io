@@ -11,7 +11,10 @@ hero:
       link: /ja/resume
     - theme: alt
       text: ブログへ行く
-      link: /blog/
+      link: /ja/blog/
+    - theme: alt
+      text: 技術ブログへ
+      link: /ja/tech/
 
 features:
   - title: System Engineer
