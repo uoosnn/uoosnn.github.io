@@ -17,13 +17,25 @@ With a deep understanding of code, I go beyond simple server management to proac
 
 ## 💼 Experience
 
-* **HostCenter** | System Engineer (Senior Staff)
+* **HostCenter** | System Engineer (Senior)
   * 2021.11 ~ Present
-  * Key Responsibilities: Server customer support and infrastructure troubleshooting
-  * **Key Achievements & Troubleshooting Experience**:
-    * **Rapid Recovery & Optimization of Major Client DB Failures**: When DB (MySQL/MariaDB) outages occurred, personally wrote and utilized system memory buffer (InnoDB Buffer Pool, etc.) allocation analysis queries to identify bottleneck causes. This reduced the expected recovery time (1 hour) to **under 10 minutes** and restored services to normal.
-    * **Building Client Trust through Failure Analysis Reporting**: After DB recovery, provided high-quality failure root cause analysis reports containing memory availability and tuning details to major clients, significantly improving trust in infrastructure reliability.
-    * **Minimizing Downtime & Crisis Management**: During critical server infrastructure failures such as OS disk corruption, performed immediate recovery using backups with accurate and swift judgment to minimize service downtime. Earned **early promotion to Senior Staff** in recognition of this incident response capability.
+  * Key Responsibilities: Leading large-scale infrastructure architecture consulting, hybrid cloud deployments, and troubleshooting
+  * **Key Responsibilities & Achievements (Senior Engineer Focus)**:
+    * **Public Sector Large-Scale Infrastructure Architecture & Cost Optimization Consulting**
+      * Collaborated with clients and developers to forecast real user volumes and traffic, designing optimized **Load Balancing architectures** and **network integration topologies** with security appliances.
+      * Considering limited public sector budgets, led efficient infrastructure deployments by proposing a **Total Cost of Ownership (TCO) forecast model** tailored to service requirements and instance specifications.
+    * **Hybrid Cloud Deployment & Large-Scale Infrastructure Migration**
+      * Executed **bidirectional cloud (NHN, NCP) ↔ on-premises migrations** ranging from single-server setups to entire infrastructure scales.
+      * Built secure hybrid architectures interconnecting cloud environments with on-premises physical security appliances and servers using **NHN Colocation Gateway**.
+    * **Full-Stack Troubleshooting & Crisis Management for Major Security Incidents**
+      * Provided comprehensive technical support spanning performance tuning and incident resolution for Web/WAS/DB (Apache, Tomcat, PHP, MariaDB, etc.) to **L2/L3 network routing and firewall policy operations** within data centers (IDC).
+      * During major security breach incidents, led joint task forces with internal departments (Sales) and client stakeholders to design **rapid incident recovery processes and recurrence prevention architectures**.
+    * **Data-Driven Proactive Infrastructure Monitoring & Service Optimization**
+      * Built an integrated monitoring environment utilizing the **Zabbix and ELK (Elastic, etc.) stack**, conducting log analysis-based network traffic anomaly detection.
+      * Analyzed monthly system resource trends to identify bottleneck zones, maximizing service availability by proposing **proactive infrastructure scaling and tuning strategies to clients** prior to any system degradation or failure.
+    * **Leading IDC Relocation & Network Integration via Multi-Organizational Collaboration**
+      * Served as the **Infrastructure/Network Technical Lead** in data center relocation and third-party solution integration projects.
+      * Established flexible communication channels (email, collaboration tools, etc.) with external vendors and partners, enabling **immediate troubleshooting and seamless project completion without schedule delays**.
 
 ---
 
