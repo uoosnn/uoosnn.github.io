@@ -113,6 +113,50 @@ export default defineConfig({
     // Google Analytics (GA4)
     ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-Y22Y38DLKM' }],
     ['script', {}, "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-Y22Y38DLKM');"],
+    // 다국어 브라우저 감지 및 자동 리다이렉트 스크립트 (KO, JA, EN)
+    ['script', {}, `
+      (function() {
+        if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+        var path = window.location.pathname;
+        var ref = document.referrer || '';
+        var host = window.location.host;
+
+        /* 1. 현재 접속 경로 및 이전 페이지(Referrer)를 통해 사용자가 선택한 언어 감지 및 저장 */
+        if (path.startsWith('/ja/') || path === '/ja') {
+          localStorage.setItem('user_pref_lang', 'ja');
+          return;
+        } else if (path.startsWith('/en/') || path === '/en') {
+          localStorage.setItem('user_pref_lang', 'en');
+          return;
+        } else if (ref.indexOf(host) !== -1 && (ref.indexOf('/ja/') !== -1 || ref.indexOf('/en/') !== -1)) {
+          /* JA나 EN 페이지에서 KO(기본) 페이지로 수동 이동한 경우 -> 한국어 선택으로 기억 */
+          localStorage.setItem('user_pref_lang', 'ko');
+        }
+
+        /* 2. 메인 홈(루트) 방문 시에만 자동 분기 (딥링크로 들어온 개별 포스트 보호) */
+        if (path === '/' || path === '/index.html') {
+          var targetLang = localStorage.getItem('user_pref_lang');
+          if (!targetLang) {
+            /* 저장된 기록이 없을 시 브라우저 설정 언어 감지 */
+            var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+            if (browserLang.indexOf('ja') === 0) {
+              targetLang = 'ja';
+            } else if (browserLang.indexOf('ko') === 0) {
+              targetLang = 'ko';
+            } else {
+              targetLang = 'en'; /* KO, JA 외 기타 외국어 접속자는 EN으로 분기 */
+            }
+            localStorage.setItem('user_pref_lang', targetLang);
+          }
+
+          if (targetLang === 'ja') {
+            window.location.replace('/ja/');
+          } else if (targetLang === 'en') {
+            window.location.replace('/en/');
+          }
+        }
+      })();
+    `],
   ],
 
   // sitemap 자동 생성 (Google Search Console 등록용)
