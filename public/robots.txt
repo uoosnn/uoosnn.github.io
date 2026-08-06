@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://uoosnn.github.io/sitemap.xml
+Sitemap: https://uoosnn.github.io/feed.xml
+Sitemap: https://uoosnn.github.io/en/feed.xml
+Sitemap: https://uoosnn.github.io/ja/feed.xml
