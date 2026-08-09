@@ -164,6 +164,23 @@ export default defineConfig({
     hostname: 'https://uoosnn.github.io'
   },
 
+  // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang) 자동 주입
+  transformPageData(pageData) {
+    const route = pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '');
+    const canonicalUrl = `https://uoosnn.github.io/${route}`;
+    pageData.frontmatter.head ??= [];
+    
+    // Canonical URL
+    pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);
+    
+    // Hreflang Tags
+    const baseRoute = route.replace(/^(en\/|ja\/)/, '');
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: `https://uoosnn.github.io/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: `https://uoosnn.github.io/en/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: `https://uoosnn.github.io/ja/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `https://uoosnn.github.io/${baseRoute}` }]);
+  },
+
   // 빌드 완료 후 RSS 피드 생성
   buildEnd: generateRSSFeed,
 
