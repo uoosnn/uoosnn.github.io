@@ -65,3 +65,39 @@
 .VPHero .text {
   max-width: 1200px !important;
 }
+
+/* ----------------------------------------------------
+   와이드 모니터(PC) 레이아웃 너비 확장 (Empty Space 해소)
+   ---------------------------------------------------- */
+@media (min-width: 1280px) {
+  /* 본문(글) 컨테이너 너비를 900px로 확장 */
+  .VPDoc.has-sidebar .content {
+    max-width: 900px !important;
+  }
+
+  /* 사이드바와 본문 전체를 묶는 레이아웃 너비 유연하게 확장 */
+  :root {
+    --vp-layout-max-width: 1536px;
+  }
+}
+
+/* ----------------------------------------------------
+   테마 맞춤형 슬림 커스텀 스크롤바 디자인
+   ---------------------------------------------------- */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--vp-c-brand-soft);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--vp-c-brand-2);
+}
