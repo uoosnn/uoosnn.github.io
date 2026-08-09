@@ -194,8 +194,7 @@ export default defineConfig({
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
           { text: 'Blog', link: '/blog/' },
-          { text: 'Tech', link: '/tech/' },
-          { text: 'WebGL', link: '/webgl/' }
+          { text: 'Tech', link: '/tech/' }
         ],
         sidebar: {
           '/blog/': [
@@ -213,14 +212,6 @@ export default defineConfig({
                 ...getBlogSidebar('./tech', '/tech')
               ]
             }
-          ],
-          '/webgl/': [
-            {
-              text: 'WebGL Practice',
-              items: [
-                ...getBlogSidebar('./webgl', '/webgl')
-              ]
-            }
           ]
         }
       }
@@ -234,8 +225,7 @@ export default defineConfig({
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
           { text: 'Blog', link: '/en/blog/' },
-          { text: 'Tech', link: '/en/tech/' },
-          { text: 'WebGL', link: '/en/webgl/' }
+          { text: 'Tech', link: '/en/tech/' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -253,14 +243,6 @@ export default defineConfig({
                 ...getBlogSidebar('./en/tech', '/en/tech')
               ]
             }
-          ],
-          '/en/webgl/': [
-            {
-              text: 'WebGL Practice',
-              items: [
-                ...getBlogSidebar('./en/webgl', '/en/webgl')
-              ]
-            }
           ]
         }
       }
@@ -274,8 +256,7 @@ export default defineConfig({
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
           { text: 'Blog', link: '/ja/blog/' },
-          { text: 'Tech', link: '/ja/tech/' },
-          { text: 'WebGL', link: '/ja/webgl/' }
+          { text: 'Tech', link: '/ja/tech/' }
         ],
         sidebar: {
           '/ja/blog/': [
@@ -291,14 +272,6 @@ export default defineConfig({
               text: 'Technical Articles',
               items: [
                 ...getBlogSidebar('./ja/tech', '/ja/tech')
-              ]
-            }
-          ],
-          '/ja/webgl/': [
-            {
-              text: 'WebGL Practice',
-              items: [
-                ...getBlogSidebar('./ja/webgl', '/ja/webgl')
               ]
             }
           ]
