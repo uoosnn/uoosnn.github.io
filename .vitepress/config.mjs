@@ -116,7 +116,11 @@ export default defineConfig({
     // 다국어 브라우저 감지 및 자동 리다이렉트 스크립트 (KO, JA, EN)
     ['script', {}, `
       (function() {
-        if (typeof window === 'undefined' || typeof localStorage === 'undefined') return;
+        if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof navigator === 'undefined') return;
+        
+        /* 0. 검색엔진 봇(크롤러) 예외 처리: 봇은 리다이렉트 없이 원본 페이지를 온전히 수집하도록 허용 */
+        var isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
+        if (isBot) return;
         var path = window.location.pathname;
         var ref = document.referrer || '';
         var host = window.location.host;
