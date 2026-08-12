@@ -137,27 +137,26 @@ export default defineConfig({
           localStorage.setItem('user_pref_lang', 'ko');
         }
 
-        /* 2. 메인 홈(루트) 방문 시에만 자동 분기 (딥링크로 들어온 개별 포스트 보호) */
-        if (path === '/' || path === '/index.html') {
-          var targetLang = localStorage.getItem('user_pref_lang');
-          if (!targetLang) {
-            /* 저장된 기록이 없을 시 브라우저 설정 언어 감지 */
-            var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-            if (browserLang.indexOf('ja') === 0) {
-              targetLang = 'ja';
-            } else if (browserLang.indexOf('ko') === 0) {
-              targetLang = 'ko';
-            } else {
-              targetLang = 'en'; /* KO, JA 외 기타 외국어 접속자는 EN으로 분기 */
-            }
-            localStorage.setItem('user_pref_lang', targetLang);
+        /* 2. 언어 감지 및 저장 (모든 페이지 적용) */
+        var targetLang = localStorage.getItem('user_pref_lang');
+        if (!targetLang) {
+          /* 저장된 기록이 없을 시 브라우저 설정 언어 감지 */
+          var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
+          if (browserLang.indexOf('ja') === 0) {
+            targetLang = 'ja';
+          } else if (browserLang.indexOf('ko') === 0) {
+            targetLang = 'ko';
+          } else {
+            targetLang = 'en'; /* KO, JA 외 기타 외국어 접속자는 EN으로 분기 */
           }
+          localStorage.setItem('user_pref_lang', targetLang);
+        }
 
-          if (targetLang === 'ja') {
-            window.location.replace('/ja/');
-          } else if (targetLang === 'en') {
-            window.location.replace('/en/');
-          }
+        /* 3. 구글 검색(딥링크) 접속 시에도 해당 언어 페이지로 강제 이동 */
+        if (targetLang === 'ja') {
+          window.location.replace('/ja' + (path === '/' ? '/' : path));
+        } else if (targetLang === 'en') {
+          window.location.replace('/en' + (path === '/' ? '/' : path));
         }
       })();
     `],
