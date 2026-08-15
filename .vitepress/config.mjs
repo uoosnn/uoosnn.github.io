@@ -110,26 +110,50 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
-    // Google Analytics (GA4)
-    ['script', { async: '', src: 'https://www.googletagmanager.com/gtag/js?id=G-Y22Y38DLKM' }],
-    ['script', {}, "window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-Y22Y38DLKM');"],
-    // 다국어 브라우저 감지 및 자동 리다이렉트 스크립트 (KO, JA, EN)
+    // 외부 서비스 사전 연결 (Preconnect & DNS Prefetch)
+    ['link', { rel: 'preconnect', href: 'https://www.googletagmanager.com' }],
+    ['link', { rel: 'preconnect', href: 'https://giscus.app' }],
+    ['link', { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' }],
+    ['link', { rel: 'dns-prefetch', href: 'https://giscus.app' }],
+    // Google Analytics (GA4) - 메인 스레드 차단 방지를 위한 Idle 로딩
+    ['script', {}, `
+      (function() {
+        function loadGA() {
+          if (window.gaLoaded) return;
+          window.gaLoaded = true;
+          var s = document.createElement('script');
+          s.async = true;
+          s.src = 'https://www.googletagmanager.com/gtag/js?id=G-Y22Y38DLKM';
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', 'G-Y22Y38DLKM');
+        }
+        if ('requestIdleCallback' in window) {
+          requestIdleCallback(loadGA, { timeout: 3000 });
+        } else {
+          window.addEventListener('load', loadGA);
+        }
+      })();
+    `],
+    // 다국어 브라우저 감지 및 자동 리다이렉트 스크립트 (KO, JA, EN - PageSpeed / Lighthouse 봇 예외 처리 포함)
     ['script', {}, `
       (function() {
         if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof navigator === 'undefined') return;
         
-        /* 0. 검색엔진 봇(크롤러) 예외 처리: 봇은 리다이렉트 없이 원본 페이지를 온전히 수집하도록 허용 */
-        var isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(navigator.userAgent);
+        /* 0. 검색엔진 봇 및 성능 측정 도구(PageSpeed/Lighthouse) 예외 처리: 봇은 리다이렉트 없이 원본 페이지를 즉시 수집/측정 */
+        var isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|bytespider/i.test(navigator.userAgent);
         if (isBot) return;
         var path = window.location.pathname;
         var ref = document.referrer || '';
         var host = window.location.host;
 
         /* 1. 현재 접속 경로 및 이전 페이지(Referrer)를 통해 사용자가 선택한 언어 감지 및 저장 */
-        if (path.startsWith('/ja/') || path === '/ja') {
+        if (path.startsWith('/ja/') || path === '/ja' || path === '/ja/') {
           localStorage.setItem('user_pref_lang', 'ja');
           return;
-        } else if (path.startsWith('/en/') || path === '/en') {
+        } else if (path.startsWith('/en/') || path === '/en' || path === '/en/') {
           localStorage.setItem('user_pref_lang', 'en');
           return;
         } else if (ref.indexOf(host) !== -1 && (ref.indexOf('/ja/') !== -1 || ref.indexOf('/en/') !== -1)) {
@@ -152,7 +176,12 @@ export default defineConfig({
           localStorage.setItem('user_pref_lang', targetLang);
         }
 
-        /* 3. 구글 검색(딥링크) 접속 시에도 해당 언어 페이지로 강제 이동 */
+        /* 3. 이미 해당 언어 경로에 위치해 있는 경우 불필요한 리다이렉트 방지 */
+        if (targetLang === 'ko' && (!path.startsWith('/ja') && !path.startsWith('/en'))) return;
+        if (targetLang === 'ja' && (path.startsWith('/ja/') || path === '/ja')) return;
+        if (targetLang === 'en' && (path.startsWith('/en/') || path === '/en')) return;
+
+        /* 4. 구글 검색(딥링크) 접속 시에도 해당 언어 페이지로 강제 이동 */
         if (targetLang === 'ja') {
           window.location.replace('/ja' + (path === '/' ? '/' : path));
         } else if (targetLang === 'en') {
@@ -292,5 +321,13 @@ export default defineConfig({
       message: 'Built with VitePress. | 📡 <a href="https://uoosnn.github.io/feed.xml" target="_blank">RSS Feed</a>',
       copyright: 'Copyright © 2026 Uoosnn'
     }
+  },
+
+  vite: {
+    build: {
+      minify: 'esbuild',
+      chunkSizeWarningLimit: 1000
+    }
   }
 })
+

@@ -1,13 +1,17 @@
 <template>
-  <div class="webgl-container">
+  <div class="webgl-container" ref="containerRef">
     <canvas ref="canvasRef" width="800" height="600"></canvas>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, onMounted, onUnmounted } from "vue";
 
 const canvasRef = ref(null);
+const containerRef = ref(null);
+let animationFrameId = null;
+let observer = null;
+let isVisible = false;
 
 onMounted(() => {
   const canvas = canvasRef.value;
@@ -20,70 +24,118 @@ onMounted(() => {
     return;
   }
 
-  // Clear with a nice dark gray color
+  // Clear background
   gl.clearColor(0.1, 0.1, 0.15, 1.0);
   gl.clear(gl.COLOR_BUFFER_BIT);
 
-  // TODO: Add your WebGL rendering code here!
-  // This is a basic template to get you started.\
-  // 1. 버텍스 셰이더 수정 (이동을 위한 uTranslation 변수 추가)
   const vsSource = `
     attribute vec4 aVertexPosition;
-    uniform vec2 uTranslation; // JS에서 매 프레임마다 위치 값을 받을 변수(Uniform)
-    
+    uniform vec2 uTranslation;
     void main() {
-      // 기존 정점 위치에 uTranslation 값을 더해서 이동시킵니다.
       gl_Position = aVertexPosition + vec4(uTranslation, 0.0, 0.0);
     }
   `;
 
-  // 픽셀(Fragment) 셰이더는 기존과 동일하게 오렌지색 유지
   const fsSource = `
     void main() {
       gl_FragColor = vec4(1.0, 0.5, 0.0, 1.0); 
     }
   `;
 
-  // ... (2. 셰이더 컴파일, 3. 프로그램 생성, 4. 버텍스 데이터 세팅은 이전 코드와 완전히 동일) ...
+  function loadShader(gl, type, source) {
+    const shader = gl.createShader(type);
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      gl.deleteShader(shader);
+      return null;
+    }
+    return shader;
+  }
 
-  // 5. 메모리와 셰이더 변수 연결 (Attribute & Uniform)
-  const positionAttributeLocation = gl.getAttribLocation(
-    shaderProgram,
-    "aVertexPosition",
-  );
+  const vertexShader = loadShader(gl, gl.VERTEX_SHADER, vsSource);
+  const fragmentShader = loadShader(gl, gl.FRAGMENT_SHADER, fsSource);
+  if (!vertexShader || !fragmentShader) return;
+
+  const shaderProgram = gl.createProgram();
+  gl.attachShader(shaderProgram, vertexShader);
+  gl.attachShader(shaderProgram, fragmentShader);
+  gl.linkProgram(shaderProgram);
+  if (!gl.getProgramParameter(shaderProgram, gl.LINK_STATUS)) return;
+
+  gl.useProgram(shaderProgram);
+
+  const positions = [
+     0.0,  0.5,
+    -0.5, -0.5,
+     0.5, -0.5,
+  ];
+  const positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+
+  const positionAttributeLocation = gl.getAttribLocation(shaderProgram, "aVertexPosition");
   gl.enableVertexAttribArray(positionAttributeLocation);
   gl.vertexAttribPointer(positionAttributeLocation, 2, gl.FLOAT, false, 0, 0);
 
-  // 새로 추가된 uTranslation 변수의 메모리 위치를 찾습니다.
-  const translationLocation = gl.getUniformLocation(
-    shaderProgram,
-    "uTranslation",
-  );
+  const translationLocation = gl.getUniformLocation(shaderProgram, "uTranslation");
 
-  // 6. 렌더링 루프 (애니메이션의 심장)
   let time = 0;
 
   function render() {
-    // A. 화면 지우기 (매 프레임마다 이전 프레임의 잔상을 지워야 함)
+    if (!isVisible) return;
+
     gl.clearColor(0.1, 0.1, 0.15, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    // B. 로직 업데이트 (시간에 따라 좌우로 움직이는 값 계산)
-    time += 0.05; // 애니메이션 속도 조절
-    const xOffset = Math.sin(time) * 0.5; // sin 함수를 써서 -0.5 ~ 0.5 사이를 왕복
+    time += 0.05;
+    const xOffset = Math.sin(time) * 0.5;
 
-    // C. 계산된 위치값을 GPU(셰이더)로 쏴주기
     gl.uniform2f(translationLocation, xOffset, 0.0);
-
-    // D. 드로우 콜 (화면에 그리기)
     gl.drawArrays(gl.TRIANGLES, 0, 3);
 
-    // E. 다음 프레임 예약 (모니터 주사율에 맞춰서 이 함수를 무한 반복)
-    requestAnimationFrame(render);
+    animationFrameId = requestAnimationFrame(render);
   }
 
-  // 루프 최초 실행!
-  render();
+  function startLoop() {
+    if (!animationFrameId && isVisible) {
+      render();
+    }
+  }
+
+  function stopLoop() {
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+  }
+
+  if ("IntersectionObserver" in window && containerRef.value) {
+    observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          isVisible = true;
+          startLoop();
+        } else {
+          isVisible = false;
+          stopLoop();
+        }
+      });
+    });
+    observer.observe(containerRef.value);
+  } else {
+    isVisible = true;
+    startLoop();
+  }
+});
+
+onUnmounted(() => {
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+  }
+  if (observer) {
+    observer.disconnect();
+  }
 });
 </script>
 
