@@ -4,6 +4,9 @@ date: 2026-05-17
 tags: [AI, 대화요약]
 ---
 
+# New Competencies Required for Developers in the AI Era
+
+
 The emergence of generative AI like ChatGPT is fundamentally changing the programming paradigm. In the past, the process of building code from scratch and implementing logic was crucial, but now AI can generate near-perfect code in just a few minutes.
 
 Amidst this change, the role of developers and the competencies they need are also being redefined. What new skills are required for developers living in the AI era?
@@ -28,3 +31,7 @@ AI is not a competitor that threatens developers' jobs, but a powerful partner t
 
 ---
 *Published time: 2026-05-17 04:51:55*
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

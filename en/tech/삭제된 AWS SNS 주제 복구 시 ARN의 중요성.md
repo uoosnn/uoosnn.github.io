@@ -4,6 +4,9 @@ date: 2026-07-08
 tags: [Tech, Troubleshooting, Incident Report, AWS, SNS, CloudWatch, ARN]
 ---
 
+# The Importance of ARN When Recovering Deleted AWS SNS Topics
+
+
 ### Problem Situation: Deleted SNS Topic and Non-functional CloudWatch Alarms
 
 Recently, an incident occurred in a client environment where an AWS SNS (Simple Notification Service) topic used for monitoring alarms was accidentally deleted. The first recovery strategy attempted was to create a new topic with the 'same name' as the deleted one. This action was based on the hypothesis that CloudWatch alarms would reference the topic's 'name'.
@@ -61,4 +64,5 @@ The correct **AWS SNS topic recovery** procedure established through this incide
 This **troubleshooting** experience demonstrated the critical importance of clearly understanding the difference between 'Name' and 'ARN' when dealing with AWS resources. Many AWS service integrations operate based on the immutable unique identifier **ARN**, rather than reusable names. Therefore, when recreating a resource after deletion, it is essential to verify the settings of all services referencing that resource and update them with the new **ARN**.
 
 ---
-Posted: 2026-07-08 09:35:53
+*Posted: 2026-07-08 09:35:53*
+*Updated: 2026-08-15 13:57:00*

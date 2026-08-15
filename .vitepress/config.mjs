@@ -17,8 +17,7 @@ function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
 
   const files = fs.readdirSync(blogDir).filter(file => file.endsWith('.md') && file !== 'index.md')
 
-  // 프론트매터의 date 기준으로 내림차순 정렬 (최신 글이 먼저 오도록)
-  const sortedFiles = files.map(file => {
+  const sortedItems = files.map(file => {
     const filePath = path.join(blogDir, file)
     const content = fs.readFileSync(filePath, 'utf-8')
     let time = 0
@@ -31,22 +30,35 @@ function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
       }
     }
 
-    const stat = fs.statSync(filePath)
+    // 마크다운 프론트매터(title:) 또는 첫 번째 H1(# 제목)에서 글 제목 추출
+    let title = ''
+    const titleMatch = content.match(/^title:\s*["']?([^"'\n]+)["']?/m)
+    if (titleMatch && titleMatch[1]) {
+      title = titleMatch[1].trim()
+    } else {
+      const h1Match = content.match(/^#\s+(.+)$/m)
+      if (h1Match && h1Match[1]) {
+        title = h1Match[1].trim()
+      } else {
+        title = file.replace(/\.md$/, '')
+      }
+    }
 
-    // date 필드가 없거나 파싱 실패 시 파일 생성/수정 시간으로 대체
+    const stat = fs.statSync(filePath)
     if (!time) {
       time = stat.mtimeMs
     }
 
-    return { file, time, mtimeMs: stat.mtimeMs }
+    const name = file.replace(/\.md$/, '')
+
+    return { file, name, title, time, mtimeMs: stat.mtimeMs }
   }).sort((a, b) => {
     if (b.time !== a.time) return b.time - a.time
     return b.mtimeMs - a.mtimeMs
-  }).map(item => item.file)
+  })
 
-  return sortedFiles.map(file => {
-    const name = file.replace(/\.md$/, '')
-    return { text: name, link: `${urlPrefix}/${name}` }
+  return sortedItems.map(item => {
+    return { text: item.title, link: `${urlPrefix}/${item.name}` }
   })
 }
 

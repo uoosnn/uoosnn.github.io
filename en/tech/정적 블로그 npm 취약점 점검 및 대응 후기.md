@@ -4,6 +4,9 @@ date: 2026-08-09
 tags: [Tech, Troubleshooting, npm, CI-CD, Vulnerability]
 ---
 
+# Analysis and Resolution of npm Dependency Vulnerabilities in a VitePress-based Static Blog
+
+
 ### 1. Overview
 
 During a routine check of the project's CI/CD pipeline, multiple security vulnerabilities were discovered in the npm dependencies of a VitePress-based static blog. Although the final deployed artifacts are pure static files (HTML/CSS/JS), an analysis and response were conducted to eliminate potential threats in the build and development environments.
@@ -62,3 +65,7 @@ In this case, rather than risking breaking compatibility with other packages by 
 ### 5. Conclusion
 
 Even for static sites, the security of build and development environments is crucial, and regular `npm audit` checks are essential. We patched immediately resolvable vulnerabilities using `npm audit fix` and reflected the updated `package-lock.json` in the remote repository to enhance the security level of the CI/CD pipeline.
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

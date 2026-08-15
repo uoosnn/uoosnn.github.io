@@ -4,6 +4,9 @@ date: 2026-05-20
 tags: [Tech, Troubleshooting, Incident Report]
 ---
 
+# 3 Rules for Developers Collaborating with AI
+
+
 While the introduction of AI into the development process has dramatically boosted productivity, it has also brought about new types of failures and technical debt. After experiencing an incident where applying AI-generated code without verification led to system-wide instability, we established clear guidelines for collaborating with AI. These are not mere recommendations but essential minimum safeguards that must be adhered to for stable service.
 
 ### Rule 1. Do not fully trust AI's output.
@@ -31,4 +34,6 @@ The third rule re-emphasizes the importance of the preceding two rules. Even a s
 
 In conclusion, AI is not replacing the developer's role but transforming it. The core competency of developers is now shifting from the ability to write code from scratch to the ability to **verify, improve, and safely integrate AI-generated code into the overall system.** These three rules represent the minimum discipline required to ensure stability in a changing development environment.
 
-Posted: 2026-05-20 21:13:55
+---
+*Posted: 2026-05-20 21:13:55*
+*Updated: 2026-08-15 13:57:00*

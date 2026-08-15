@@ -4,6 +4,9 @@ date: 2026-05-14
 tags: [뉴스, game_news]
 ---
 
+# Nexon and SOOP
+
+
 ## News Summary
 
 Nexon and SOOP have signed a partnership. This collaboration aims to expand the user ecosystem by 'connecting' games and broadcasting.
@@ -20,3 +23,7 @@ Nexon is implementing a strategy to build a new user ecosystem through collabora
 
 ---
 *Published: 2026-05-14 03:46:05*
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

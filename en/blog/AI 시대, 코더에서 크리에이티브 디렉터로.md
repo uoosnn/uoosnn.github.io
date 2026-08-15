@@ -1,9 +1,11 @@
-yaml
 ---
 title: "From Coder to Creative Director in the AI Era: An Analysis of Shifting Development Paradigms"
 date: 2026-05-20
 tags: [Tech, Troubleshooting, Incident Report]
 ---
+
+# From Coder to Creative Director in the AI Era: An Analysis of Shifting Development Paradigms
+
 
 ### Problem Definition
 
@@ -27,3 +29,7 @@ The newly defined core competencies for engineers are as follows:
 4.  **Persistence through Continuous Questioning and Improvement**: The ability to guide AI by constantly seeking better outcomes, never settling for the status quo, asking questions like 'Is this the best it can be?' or 'Is there a better structure?'
 
 In conclusion, the engineer's role must evolve to be liberated from low-level coding tasks, focusing instead on high-value activities such as setting project direction, validating AI-generated outputs, and taking responsibility for the final quality. This is interpreted not as technology replacing humans, but as a process of providing more powerful tools to skilled engineers, thereby amplifying their capabilities.
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

@@ -4,6 +4,9 @@ date: 2026-08-05
 tags: [Tech, Troubleshooting, AWS, Backup, Snapshot, AMI, DLM]
 ---
 
+# EBS Snapshots and AMIs: A Technical Comparative Analysis for AWS Backup Strategy Formulation
+
+
 A client recently inquired about an automated backup policy for EC2 instances. During the discussion, we internally clarified our standardized `AWS backup` strategy, specifically the technical differences between EBS Snapshots and AMIs (Amazon Machine Images) and the criteria for choosing between them based on specific scenarios. This document serves as a log summarizing that analysis from a technical perspective.
 
 ### 1. Fundamental Differences in Backup Targets
@@ -50,4 +53,6 @@ The analysis reveals that these two technologies are not mutually exclusive but 
 
 Therefore, to ensure client service continuity, we recommended AMI creation via DLM as the default `AWS backup` policy, which also aligns with our Standard Operating Procedures (SOP).
 
-Posted: 2026-08-05 13:00:36
+---
+*Posted: 2026-08-05 13:00:36*
+*Updated: 2026-08-15 13:57:00*

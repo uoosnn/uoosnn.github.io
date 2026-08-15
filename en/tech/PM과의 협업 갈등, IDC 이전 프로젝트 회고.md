@@ -4,6 +4,9 @@ date: 2026-06-26
 tags: [IDC, Server Migration, Troubleshooting, BIOS, XCC]
 ---
 
+# Troubleshooting Log: Lenovo Server XCC Access Issue After IDC Migration
+
+
 ## Project Overview
 
 In June 2026, a physical infrastructure migration project was carried out to relocate a specific client's server assets from an existing data center to an external IDC. The engineer's primary role was to physically relocate the servers and resolve any hardware-level issues that might arise afterward.
@@ -33,4 +36,6 @@ The `troubleshooting` experience during this `server migration` process left the
 1.  **Importance of Clear Pre-agreed Procedures**: In large-scale migration projects involving collaboration among multiple organizations, the procedures for transmitting and applying critical access information, such as passwords, must be clearly documented and mutually agreed upon in advance.
 2.  **Respect for On-site Engineer's Judgment**: In `troubleshooting` within specialized environments like the `Serial Console`, the judgment of the engineer directly assessing the on-site situation is crucial. During remote support, trust-based collaboration founded on accurate information sharing is essential.
 
-Posted on: 2026-06-26 21:27:58
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

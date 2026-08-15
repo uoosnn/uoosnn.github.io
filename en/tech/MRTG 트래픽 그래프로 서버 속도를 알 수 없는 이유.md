@@ -4,6 +4,9 @@ date: 2026-07-10
 tags: [Tech, Troubleshooting, Incident Report]
 ---
 
+# Why MRTG Traffic Graphs Cannot Tell You Server Speed
+
+
 Client inquiries about "slow servers" are among the most common issues received. Often, these inquiries are accompanied by MRTG (Multi Router Traffic Grapher) traffic graphs for the service. However, to state the conclusion first, MRTG graphs cannot be a direct indicator for judging network latency or server response speed. This article documents why it's difficult to identify the cause of performance degradation using only MRTG, and outlines the correct approach to network **troubleshooting**.
 
 ### Throughput vs. Latency
@@ -50,3 +53,7 @@ Thus, for international services, latency in the hundreds of milliseconds can be
 ### Conclusion
 
 When analyzing the issue of "slow servers," MRTG should only be used as supplementary material to understand traffic volume and usage patterns. For actual root cause identification, using tools like `traceroute` to measure the packet's actual path and latency per segment is the standard **troubleshooting** approach. Clearly understanding the purpose and limitations of each tool is the first step toward accurate diagnosis.
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

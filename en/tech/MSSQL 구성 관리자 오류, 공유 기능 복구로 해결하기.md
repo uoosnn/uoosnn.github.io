@@ -4,6 +4,9 @@ date: 2026-07-20
 tags: [Tech, Troubleshooting, MSSQL, SQL Server, DBA]
 ---
 
+# Resolving MSSQL Configuration Manager Error by Repairing Shared Features
+
+
 ### Problem Situation: MSSQL Configuration Manager Unable to Run
 
 An incident occurred on a production server where **SQL Server Configuration Manager**, a critical tool for managing MSSQL service network protocols and startup accounts, failed to launch. This tool operates by loading relevant snap-ins via `mmc.exe`, but it failed to load the snap-in during this process and did not execute normally.
@@ -38,4 +41,6 @@ The 'Shared Features' repair operation was successfully completed, and **SQL Ser
 
 This **troubleshooting** case demonstrates how much safer and more efficient it is to use the official recovery features provided by the installation program, rather than manually manipulating files, when component issues like missing DLL files occur. In particular, MSSQL's recovery option, which separates instances and **shared features**, is a very useful function for ensuring service stability.
 
-Posted on: 2026-07-20 14:07:27
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

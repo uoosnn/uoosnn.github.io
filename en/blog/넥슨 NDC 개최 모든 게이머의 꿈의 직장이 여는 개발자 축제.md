@@ -4,6 +4,9 @@ date: 2026-05-12
 tags: [뉴스, game_news]
 ---
 
+# Nexon Developer Conference (NDC) Announcement: A Developer Festival Hosted by the Dream Company of Every Gamer
+
+
 ## News Summary
 
 Nexon, South Korea's largest game company, has announced that it will host the **'Nexon Developer Conference (NDC)'**, the nation's largest game developer conference, in Pangyo next month. NDC is a premier platform for knowledge sharing, established by Nexon to share its accumulated development know-how and expertise with the entire industry, fostering mutual growth.
@@ -26,3 +29,7 @@ For more details, please check the original link below.
 
 ---
 *Published: 2026-05-12 00:14:07*
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

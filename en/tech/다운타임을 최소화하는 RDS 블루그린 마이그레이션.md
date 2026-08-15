@@ -4,6 +4,9 @@ date: 2026-07-28
 tags: [Tech, Troubleshooting, Incident Report]
 ---
 
+# RDS Blue/Green Migration to Minimize Downtime
+
+
 ## Problem: Approaching End of Support (EOS) for Aurora MySQL Version
 
 The minor version of our operational AWS RDS Aurora cluster was soon to reach its End of Support (EOS). Upon reaching EOS, security patches and bug fixes would no longer be provided, making a database version upgrade essential for stable service operation.
@@ -63,4 +66,6 @@ Even after a successful switchover, the old Blue environment is not immediately 
 
 In conclusion, **RDS Blue/Green Deployment** was once again confirmed to be a highly effective method for safely upgrading a database while minimizing downtime through logical replication using `binlog`.
 
-Posted: 2026-07-28 09:03:17
+---
+*Posted: 2026-07-28 09:03:17*
+*Updated: 2026-08-15 13:57:00*

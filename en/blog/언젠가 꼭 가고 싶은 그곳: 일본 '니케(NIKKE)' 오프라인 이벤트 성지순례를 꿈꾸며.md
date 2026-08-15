@@ -5,7 +5,7 @@ tags: [니케, NIKKE, 서브컬처, 일본여행, 목표, 일상기록]
 description: "Japan's NIKKE offline collaboration events are so massive they're called the 'main server.' I'm documenting my new goal of visiting them in person someday."
 ---
 
-# A Place I Must Visit Someday: A Pilgrimage to Japan's 'NIKKE' Collaboration Events
+# A Place I Must Visit Someday: Dreaming of a Pilgrimage to Japan
 
 Hello! I've been consistently documenting my hobbies, which serve as my definite sanctuary amidst the intense daily life of a systems engineer.
 
@@ -24,3 +24,7 @@ Beyond simply playing the game through a monitor, I've developed a strong desire
 So, I've decided to add a new goal to my life's bucket list: **"To one day visit Japan and go to a NIKKE collaboration venue!"** Just imagining enjoying the local events and browsing the collaboration merchandise is already exciting. This new goal has also given me much stronger motivation for the Japanese studies I've been doing lately.
 
 I'll continue to work hard every day, looking forward to the day when this blog features a vivid and joyful 'Visit to a Japanese NIKKE Offline Event' post, instead of a complex server troubleshooting log
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*

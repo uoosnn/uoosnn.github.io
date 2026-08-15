@@ -4,6 +4,9 @@ date: 2026-05-17
 tags: [Tech, AI, 기술분석]
 ---
 
+# Configuring Network Security Using a Forti Firewall
+
+
 This document outlines how to configure a network based on a FortiGate firewall to meet customer security requirements. This article covers the process of configuring internal server IPs as private and enhancing security by segmenting the network into Zones.
 
 ## Getting Started: Firmware Update and Initial Setup
@@ -37,3 +40,7 @@ As described above, a robust network security environment can be established by 
 
 ---
 *Published: 2026-05-17 08:11:32*
+
+---
+*Posted: 2026-08-15 13:57:00*
+*Updated: 2026-08-15 13:57:00*
