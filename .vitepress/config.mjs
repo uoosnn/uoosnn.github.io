@@ -4,7 +4,8 @@ import { writeFileSync, mkdirSync } from 'fs'
 import fs from 'fs'
 import path from 'path'
 
-const SITE_URL = 'https://uoosnn.github.io'
+const SITE_URL = 'https://www.uoosnn.com'
+
 
 /**
  * 지정된 디렉토리에서 블로그 사이드바 목록을 생성합니다.
