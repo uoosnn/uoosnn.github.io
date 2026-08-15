@@ -72,12 +72,13 @@
 /* ----------------------------------------------------
    모바일 터치 타깃 최소 크기 확보 (Min 44px x 44px for a11y)
    ---------------------------------------------------- */
-.VPNavBarMenuLink,
 .VPSocialLink,
 .VPFooter a {
   min-height: 44px;
+  min-width: 44px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 /* ----------------------------------------------------

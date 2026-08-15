@@ -115,7 +115,7 @@ export default defineConfig({
     ['link', { rel: 'preconnect', href: 'https://giscus.app' }],
     ['link', { rel: 'dns-prefetch', href: 'https://www.googletagmanager.com' }],
     ['link', { rel: 'dns-prefetch', href: 'https://giscus.app' }],
-    // Google Analytics (GA4) - 메인 스레드 차단 방지를 위한 Idle 로딩
+    // Google Analytics (GA4) - 사용자 상호작용 또는 5초 후 비동기 지연 로딩 (TBT 완전 제거)
     ['script', {}, `
       (function() {
         function loadGA() {
@@ -130,11 +130,13 @@ export default defineConfig({
           gtag('js', new Date());
           gtag('config', 'G-Y22Y38DLKM');
         }
-        if ('requestIdleCallback' in window) {
-          requestIdleCallback(loadGA, { timeout: 3000 });
-        } else {
-          window.addEventListener('load', loadGA);
+        var events = ['mousemove', 'touchstart', 'scroll', 'keydown'];
+        function triggerGA() {
+          loadGA();
+          events.forEach(function(e) { window.removeEventListener(e, triggerGA); });
         }
+        events.forEach(function(e) { window.addEventListener(e, triggerGA, { passive: true }); });
+        setTimeout(loadGA, 5000);
       })();
     `],
     // 다국어 브라우저 감지 및 자동 리다이렉트 스크립트 (KO, JA, EN - PageSpeed / Lighthouse 봇 예외 처리 포함)
