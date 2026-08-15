@@ -80,7 +80,7 @@ watch(isDark, () => {
 </script>
 
 <template>
-  <div ref="container" class="giscus-container" />
+  <div ref="container" class="giscus-container" role="region" aria-label="사용자 댓글 구역" />
 </template>
 
 <style scoped>

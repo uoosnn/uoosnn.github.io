@@ -318,7 +318,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/uoosnn' }
     ],
     footer: {
-      message: 'Built with VitePress. | 📡 <a href="https://uoosnn.github.io/feed.xml" target="_blank">RSS Feed</a>',
+      message: 'Built with VitePress. | 📡 <a href="https://uoosnn.github.io/feed.xml" target="_blank" rel="noopener noreferrer" aria-label="Uoosnn Blog RSS 피드 구독">RSS Feed</a>',
       copyright: 'Copyright © 2026 Uoosnn'
     }
   },

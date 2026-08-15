@@ -1,6 +1,6 @@
 <template>
-  <div class="webgl-container" ref="containerRef">
-    <canvas ref="canvasRef" width="800" height="600"></canvas>
+  <div class="webgl-container" ref="containerRef" role="region" aria-label="WebGL 그래픽 영역">
+    <canvas ref="canvasRef" width="800" height="600" role="img" aria-label="WebGL 3D 그래픽 애니메이션"></canvas>
   </div>
 </template>
 
