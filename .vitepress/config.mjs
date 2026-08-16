@@ -152,6 +152,18 @@ export default defineConfig({
         setTimeout(loadGA, 5000);
       })();
     `],
+    // Google AI Overview (AI 개요) 및 검색엔진용 JSON-LD 구조화 데이터 (Schema.org)
+    ['script', { type: 'application/ld+json' }, JSON.stringify({
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      'name': 'Uoosnn Blog',
+      'url': 'https://www.uoosnn.com',
+      'inLanguage': ['ko', 'en', 'ja'],
+      'author': {
+        '@type': 'Person',
+        'name': 'Uoosnn'
+      }
+    })]
   ],
 
   // sitemap 자동 생성 (Google Search Console 등록용)
