@@ -1,7 +1,8 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://uoosnn.github.io/sitemap.xml
-Sitemap: https://uoosnn.github.io/feed.xml
-Sitemap: https://uoosnn.github.io/en/feed.xml
-Sitemap: https://uoosnn.github.io/ja/feed.xml
+Sitemap: https://www.uoosnn.com/sitemap.xml
+Sitemap: https://www.uoosnn.com/feed.xml
+Sitemap: https://www.uoosnn.com/en/feed.xml
+Sitemap: https://www.uoosnn.com/ja/feed.xml
+

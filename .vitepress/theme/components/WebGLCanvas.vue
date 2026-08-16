@@ -82,9 +82,24 @@ onMounted(() => {
 
   let time = 0;
 
+  function resizeCanvas() {
+    const dpr = window.devicePixelRatio || 1;
+    const width = containerRef.value ? containerRef.value.clientWidth || 800 : 800;
+    const height = Math.round(width * 0.75);
+    if (canvas.width !== width * dpr || canvas.height !== height * dpr) {
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      gl.viewport(0, 0, canvas.width, canvas.height);
+    }
+  }
+
+  resizeCanvas();
+  window.addEventListener('resize', resizeCanvas);
+
   function render() {
     if (!isVisible) return;
 
+    resizeCanvas();
     gl.clearColor(0.1, 0.1, 0.15, 1.0);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
@@ -127,15 +142,16 @@ onMounted(() => {
     isVisible = true;
     startLoop();
   }
-});
 
-onUnmounted(() => {
-  if (animationFrameId) {
-    cancelAnimationFrame(animationFrameId);
-  }
-  if (observer) {
-    observer.disconnect();
-  }
+  onUnmounted(() => {
+    window.removeEventListener('resize', resizeCanvas);
+    if (animationFrameId) {
+      cancelAnimationFrame(animationFrameId);
+    }
+    if (observer) {
+      observer.disconnect();
+    }
+  });
 });
 </script>
 

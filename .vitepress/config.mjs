@@ -112,7 +112,7 @@ async function generateRSSFeed(config) {
       : config.outDir
     mkdirSync(outDir, { recursive: true })
     writeFileSync(path.join(outDir, 'feed.xml'), feed.rss2())
-    console.log(`✅ RSS 피드 생성 완료: ${prefix || '/'}/feed.xml`)
+    console.log(`✅ RSS 피드 생성 완료: ${prefix}/feed.xml`)
   }
 }
 
