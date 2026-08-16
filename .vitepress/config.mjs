@@ -152,69 +152,17 @@ export default defineConfig({
         setTimeout(loadGA, 5000);
       })();
     `],
-    // 다국어 브라우저 감지 및 자동 리다이렉트 스크립트 (KO, JA, EN - PageSpeed / Lighthouse 봇 예외 처리 포함)
-    ['script', {}, `
-      (function() {
-        if (typeof window === 'undefined' || typeof localStorage === 'undefined' || typeof navigator === 'undefined') return;
-        
-        /* 0. 검색엔진 봇 및 성능 측정 도구(PageSpeed/Lighthouse) 예외 처리: 봇은 리다이렉트 없이 원본 페이지를 즉시 수집/측정 */
-        var isBot = /bot|googlebot|crawler|spider|robot|crawling|lighthouse|pagespeed|pingdom|gtmetrix|bytespider/i.test(navigator.userAgent);
-        if (isBot) return;
-        var path = window.location.pathname;
-        var ref = document.referrer || '';
-        var host = window.location.host;
-
-        /* 1. 현재 접속 경로 및 이전 페이지(Referrer)를 통해 사용자가 선택한 언어 감지 및 저장 */
-        if (path.startsWith('/ja/') || path === '/ja' || path === '/ja/') {
-          localStorage.setItem('user_pref_lang', 'ja');
-          return;
-        } else if (path.startsWith('/en/') || path === '/en' || path === '/en/') {
-          localStorage.setItem('user_pref_lang', 'en');
-          return;
-        } else if (ref.indexOf(host) !== -1 && (ref.indexOf('/ja/') !== -1 || ref.indexOf('/en/') !== -1)) {
-          /* JA나 EN 페이지에서 KO(기본) 페이지로 수동 이동한 경우 -> 한국어 선택으로 기억 */
-          localStorage.setItem('user_pref_lang', 'ko');
-        }
-
-        /* 2. 언어 감지 및 저장 (모든 페이지 적용) */
-        var targetLang = localStorage.getItem('user_pref_lang');
-        if (!targetLang) {
-          /* 저장된 기록이 없을 시 브라우저 설정 언어 감지 */
-          var browserLang = (navigator.language || navigator.userLanguage || '').toLowerCase();
-          if (browserLang.indexOf('ja') === 0) {
-            targetLang = 'ja';
-          } else if (browserLang.indexOf('ko') === 0) {
-            targetLang = 'ko';
-          } else {
-            targetLang = 'en'; /* KO, JA 외 기타 외국어 접속자는 EN으로 분기 */
-          }
-          localStorage.setItem('user_pref_lang', targetLang);
-        }
-
-        /* 3. 이미 해당 언어 경로에 위치해 있는 경우 불필요한 리다이렉트 방지 */
-        if (targetLang === 'ko' && (!path.startsWith('/ja') && !path.startsWith('/en'))) return;
-        if (targetLang === 'ja' && (path.startsWith('/ja/') || path === '/ja')) return;
-        if (targetLang === 'en' && (path.startsWith('/en/') || path === '/en')) return;
-
-        /* 4. 구글 검색(딥링크) 접속 시에도 해당 언어 페이지로 강제 이동 */
-        if (targetLang === 'ja') {
-          window.location.replace('/ja' + (path === '/' ? '/' : path));
-        } else if (targetLang === 'en') {
-          window.location.replace('/en' + (path === '/' ? '/' : path));
-        }
-      })();
-    `],
   ],
 
   // sitemap 자동 생성 (Google Search Console 등록용)
   sitemap: {
-    hostname: 'https://uoosnn.github.io'
+    hostname: SITE_URL
   },
 
   // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang) 자동 주입
   transformPageData(pageData) {
     const route = pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '');
-    const canonicalUrl = `https://uoosnn.github.io/${route}`;
+    const canonicalUrl = `${SITE_URL}/${route}`;
     pageData.frontmatter.head ??= [];
     
     // Canonical URL
@@ -222,10 +170,10 @@ export default defineConfig({
     
     // Hreflang Tags
     const baseRoute = route.replace(/^(en\/|ja\/)/, '');
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: `https://uoosnn.github.io/${baseRoute}` }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: `https://uoosnn.github.io/en/${baseRoute}` }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: `https://uoosnn.github.io/ja/${baseRoute}` }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `https://uoosnn.github.io/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: `${SITE_URL}/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/en/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: `${SITE_URL}/ja/${baseRoute}` }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${baseRoute}` }]);
   },
 
   // 빌드 완료 후 RSS 피드 생성
