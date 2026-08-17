@@ -15,15 +15,26 @@ export default {
       if (typeof document === 'undefined') return
       nextTick(() => {
         const vpContent = document.getElementById('VPContent')
-        if (!vpContent) return
-        const isHome = frontmatter.value.layout === 'home'
-        const isNotFound = !!document.querySelector('.NotFound')
-        if (isHome || isNotFound) {
-          vpContent.setAttribute('role', 'main')
-          vpContent.setAttribute('aria-label', '메인 콘텐츠')
-        } else {
-          vpContent.removeAttribute('role')
-          vpContent.removeAttribute('aria-label')
+        if (vpContent) {
+          const isHome = frontmatter.value.layout === 'home'
+          const isNotFound = !!document.querySelector('.NotFound')
+          if (isHome || isNotFound) {
+            vpContent.setAttribute('role', 'main')
+            vpContent.setAttribute('aria-label', '메인 콘텐츠')
+          } else {
+            vpContent.removeAttribute('role')
+            vpContent.removeAttribute('aria-label')
+          }
+        }
+        // 테마 전환 스위치 버튼 및 SkipLink 접근성 이름(aria-label) 보정
+        document.querySelectorAll('.VPSwitchAppearance').forEach(btn => {
+          if (!btn.getAttribute('aria-label')) {
+            btn.setAttribute('aria-label', '테마 전환 (다크모드/라이트모드)')
+          }
+        })
+        const skipLink = document.querySelector('.VPSkipLink')
+        if (skipLink && !skipLink.getAttribute('aria-label')) {
+          skipLink.setAttribute('aria-label', '본문 콘텐츠로 바로가기')
         }
       })
     }

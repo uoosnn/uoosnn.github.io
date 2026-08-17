@@ -196,7 +196,7 @@ export default defineConfig({
     pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${baseRoute}` }]);
   },
 
-  // 정적 빌드 시 렌더링 차단 CSS 해제 및 landmark-one-main 접근성 규격 자동 주입
+  // 정적 빌드 시 렌더링 차단 CSS 해제, 버튼 접근성 이름 및 landmark-one-main 주입
   transformHtml(code, id, { pageData }) {
     // 1. vp-icons.css 렌더링 차단(Render-blocking) 해제 - 비동기 로딩
     code = code.replace(
@@ -210,7 +210,19 @@ export default defineConfig({
       '<link rel="preload stylesheet" href="$1" as="style" fetchpriority="high">'
     );
 
-    // 3. landmark-one-main 접근성 규격 주입
+    // 3. 버튼 접근성 이름(aria-label) 주입 (테마 전환 스위치 버튼)
+    code = code.replace(
+      /class="VPSwitch VPSwitchAppearance"/g,
+      'class="VPSwitch VPSwitchAppearance" aria-label="테마 전환 (다크모드/라이트모드)"'
+    );
+
+    // 4. Skip to content 바로가기 링크 접근성 이름 주입
+    code = code.replace(
+      '<a href="#VPContent" class="VPSkipLink visually-hidden"',
+      '<a href="#VPContent" class="VPSkipLink visually-hidden" aria-label="본문 콘텐츠로 바로가기"'
+    );
+
+    // 5. landmark-one-main 접근성 규격 주입
     const isHome = pageData?.frontmatter?.layout === 'home';
     const isNotFound = id.endsWith('404.html') || code.includes('class="NotFound"') || pageData?.relativePath === '404.md';
     if (isHome) {
