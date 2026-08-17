@@ -188,6 +188,24 @@ export default defineConfig({
     pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${baseRoute}` }]);
   },
 
+  // 홈 및 404 페이지 정적 빌드 시 landmark-one-main 접근성 규격(role="main") 자동 주입
+  transformHtml(code, id, { pageData }) {
+    const isHome = pageData?.frontmatter?.layout === 'home';
+    const isNotFound = id.endsWith('404.html') || code.includes('class="NotFound"') || pageData?.relativePath === '404.md';
+    if (isHome) {
+      return code.replace(
+        /id="VPContent"/g,
+        'id="VPContent" role="main" aria-label="메인 콘텐츠"'
+      );
+    }
+    if (isNotFound) {
+      return code.replace(
+        '<div id="app"></div>',
+        '<div id="app" role="main" aria-label="Not Found"></div>'
+      );
+    }
+  },
+
   // 빌드 완료 후 RSS 피드 생성
   buildEnd: generateRSSFeed,
 
