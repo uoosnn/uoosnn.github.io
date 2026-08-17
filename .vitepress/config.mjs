@@ -196,22 +196,36 @@ export default defineConfig({
     pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${baseRoute}` }]);
   },
 
-  // 홈 및 404 페이지 정적 빌드 시 landmark-one-main 접근성 규격(role="main") 자동 주입
+  // 정적 빌드 시 렌더링 차단 CSS 해제 및 landmark-one-main 접근성 규격 자동 주입
   transformHtml(code, id, { pageData }) {
+    // 1. vp-icons.css 렌더링 차단(Render-blocking) 해제 - 비동기 로딩
+    code = code.replace(
+      '<link rel="preload stylesheet" href="/vp-icons.css" as="style">',
+      '<link rel="stylesheet" href="/vp-icons.css" media="print" onload="this.media=\'all\'"><noscript><link rel="stylesheet" href="/vp-icons.css"></noscript>'
+    );
+
+    // 2. 메인 CSS 로딩 우선순위 상향 (fetchpriority="high")
+    code = code.replace(
+      /<link rel="preload stylesheet" href="(\/assets\/style\.[^"]+\.css)" as="style">/g,
+      '<link rel="preload stylesheet" href="$1" as="style" fetchpriority="high">'
+    );
+
+    // 3. landmark-one-main 접근성 규격 주입
     const isHome = pageData?.frontmatter?.layout === 'home';
     const isNotFound = id.endsWith('404.html') || code.includes('class="NotFound"') || pageData?.relativePath === '404.md';
     if (isHome) {
-      return code.replace(
+      code = code.replace(
         /id="VPContent"/g,
         'id="VPContent" role="main" aria-label="메인 콘텐츠"'
       );
-    }
-    if (isNotFound) {
-      return code.replace(
+    } else if (isNotFound) {
+      code = code.replace(
         '<div id="app"></div>',
         '<div id="app" role="main" aria-label="Not Found"></div>'
       );
     }
+
+    return code;
   },
 
   // 빌드 완료 후 RSS 피드 생성
