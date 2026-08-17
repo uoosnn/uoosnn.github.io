@@ -123,6 +123,8 @@ export default defineConfig({
   head: [
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
+    // HTTP 요청을 자동으로 HTTPS로 승격 (Lighthouse / PageSpeed HTTPS 최적화)
+    ['meta', { 'http-equiv': 'Content-Security-Policy', content: 'upgrade-insecure-requests' }],
     // 외부 서비스 사전 연결 (Preconnect & DNS Prefetch)
     ['link', { rel: 'preconnect', href: 'https://www.googletagmanager.com' }],
     ['link', { rel: 'preconnect', href: 'https://giscus.app' }],
