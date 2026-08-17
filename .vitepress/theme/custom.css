@@ -70,24 +70,64 @@
 }
 
 /* ----------------------------------------------------
-   모바일 터치 타깃 최소 크기 확보 (Min 48px x 48px for a11y)
+   WCAG / Lighthouse Mobile Tap Targets (Min 48px x 48px for a11y)
    ---------------------------------------------------- */
+
+/* 1. Navbar title / Logo link */
+.VPNavBarTitle a.title {
+  min-height: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  padding: 4px 8px !important;
+}
+
+/* 2. Search button */
+.VPNavBarSearch .DocSearch-Button {
+  min-height: 48px !important;
+  min-width: 48px !important;
+  margin: 0 4px !important;
+}
+
+/* 3. Dropdown / Flyout Menu Links (Language selector EN, JP, etc.) */
+.VPMenuLink a,
+.VPMenu .VPLink,
+.VPFlyout .button {
+  min-height: 48px !important;
+  min-width: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  margin: 2px 0 !important;
+}
+
+/* 4. Social, Footer, Appearance Switch, Hamburger & Extra Navigation Buttons */
 .VPSocialLink,
 .VPFooter a,
 .VPSwitchAppearance,
-.VPNavBarHamburger {
-  min-height: 48px;
-  min-width: 48px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+.VPNavBarHamburger,
+.VPNavBarExtra .button,
+.VPSkipLink {
+  min-height: 48px !important;
+  min-width: 48px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 2px !important;
+}
+
+/* Flex gap for navbar items to prevent touch target overlap */
+.VPNavBar .content-body,
+.VPNavBar .container,
+.VPSocialLinks,
+.VPNavBarExtra {
+  gap: 6px !important;
 }
 
 /* Skip Link 터치 영역 및 키보드 포커스 접근성 최적화 */
 .VPSkipLink {
-  min-width: 48px;
-  min-height: 48px;
-  padding: 12px 16px;
+  min-width: 48px !important;
+  min-height: 48px !important;
+  padding: 12px 16px !important;
 }
 
 .VPSkipLink:focus {
