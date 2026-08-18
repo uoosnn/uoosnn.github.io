@@ -121,8 +121,6 @@ export default defineConfig({
   description: "Software Engineer Portfolio & Blog",
   cleanUrls: true,
   head: [
-    // 네이버 서치어드바이저 사이트 소유권 확인 메타 태그
-    ['meta', { name: 'naver-site-verification', content: '6ce5262caf0075d5291609a7c6d20b032754fb4c' }],
     ['link', { rel: 'icon', href: '/favicon.ico' }],
     ['link', { rel: 'alternate', type: 'application/rss+xml', title: 'Uoosnn Blog RSS', href: '/feed.xml' }],
     // HTTP 요청을 자동으로 HTTPS로 승격 (Lighthouse / PageSpeed HTTPS 최적화)
