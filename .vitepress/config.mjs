@@ -174,12 +174,18 @@ export default defineConfig({
     })]
   ],
 
-  // sitemap 자동 생성 (Google Search Console 등록용)
+  // sitemap 자동 생성 (Google Search Console 등록용, 404 및 README 색인 제외)
   sitemap: {
-    hostname: SITE_URL
+    hostname: SITE_URL,
+    transformItems(items) {
+      return items.filter(item => {
+        const url = item.url;
+        return !url.endsWith('/README') && url !== 'README' && !url.includes('404');
+      });
+    }
   },
 
-  // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang) 자동 주입
+  // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang, JSON-LD, Noindex) 자동 주입
   transformPageData(pageData) {
     const route = pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '');
     const canonicalUrl = `${SITE_URL}/${route}`;
@@ -194,6 +200,48 @@ export default defineConfig({
     pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/en/${baseRoute}` }]);
     pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: `${SITE_URL}/ja/${baseRoute}` }]);
     pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${baseRoute}` }]);
+
+    // 404 및 README 페이지에 noindex 주입
+    if (pageData.relativePath === '404.md' || pageData.relativePath === 'README.md') {
+      pageData.frontmatter.head.push(['meta', { name: 'robots', content: 'noindex, nofollow' }]);
+    }
+
+    // 블로그 및 기술 포스트 개별 항목에 대해 Article / BlogPosting Schema.org JSON-LD 자동 생성
+    const isPost = /(^|\/)(blog|tech)\/.+/.test(pageData.relativePath) && !pageData.relativePath.endsWith('index.md');
+    if (isPost) {
+      const title = pageData.frontmatter.title || pageData.title || 'Uoosnn Post';
+      const description = pageData.frontmatter.description || pageData.description || title;
+      const datePublished = pageData.frontmatter.date ? new Date(pageData.frontmatter.date).toISOString() : new Date().toISOString();
+      
+      const jsonLd = {
+        '@context': 'https://schema.org',
+        '@type': pageData.relativePath.includes('tech') ? 'TechArticle' : 'BlogPosting',
+        'headline': title,
+        'description': description,
+        'url': canonicalUrl,
+        'datePublished': datePublished,
+        'author': {
+          '@type': 'Person',
+          'name': 'Uoosnn',
+          'url': SITE_URL
+        },
+        'publisher': {
+          '@type': 'Organization',
+          'name': 'Uoosnn',
+          'url': SITE_URL
+        },
+        'mainEntityOfPage': {
+          '@type': 'WebPage',
+          '@id': canonicalUrl
+        }
+      };
+
+      pageData.frontmatter.head.push([
+        'script',
+        { type: 'application/ld+json' },
+        JSON.stringify(jsonLd)
+      ]);
+    }
   },
 
   // 정적 빌드 시 렌더링 차단 CSS 해제, 버튼 접근성 이름 및 landmark-one-main 주입
@@ -345,7 +393,7 @@ export default defineConfig({
       { icon: 'github', link: 'https://github.com/uoosnn' }
     ],
     footer: {
-      message: 'Built with VitePress. | 📡 <a href="https://uoosnn.github.io/feed.xml" target="_blank" rel="noopener noreferrer" aria-label="Uoosnn Blog RSS 피드 구독">RSS Feed</a>',
+      message: 'Built with VitePress. | 📡 <a href="https://www.uoosnn.com/feed.xml" target="_blank" rel="noopener noreferrer" aria-label="Uoosnn Blog RSS 피드 구독">RSS Feed</a>',
       copyright: 'Copyright © 2026 Uoosnn'
     }
   },
