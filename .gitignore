@@ -1,4 +1,55 @@
-node_modules
-.vitepress/dist
-.vitepress/cache
+# VitePress / Node.js
+node_modules/
+.vitepress/dist/
+.vitepress/cache/
+dist/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+ENV/
+*.egg-info/
+.pytest_cache/
+
+# Environment variables & API Keys
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+serviceAccountKey*.json
+gcp-key*.json
+
+# OS files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# IDEs & Editors
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.sublime-project
+*.sublime-workspace
