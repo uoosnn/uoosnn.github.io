@@ -100,10 +100,9 @@
   margin: 2px 0 !important;
 }
 
-/* 4. Social, Footer, Appearance Switch, Hamburger & Extra Navigation Buttons */
+/* 4. Social, Footer, Hamburger & Extra Navigation Buttons */
 .VPSocialLink,
 .VPFooter a,
-.VPSwitchAppearance,
 .VPNavBarHamburger,
 .VPNavBarExtra .button,
 .VPSkipLink {
@@ -113,6 +112,15 @@
   align-items: center !important;
   justify-content: center !important;
   margin: 2px !important;
+}
+
+/* 5. Navbar Appearance switch container (터치 영역 48px 확보 및 스위치 알약/아이콘 디자인 정상 복원) */
+.VPNavBarAppearance {
+  min-height: 48px !important;
+  min-width: 48px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Flex gap for navbar items to prevent touch target overlap */
