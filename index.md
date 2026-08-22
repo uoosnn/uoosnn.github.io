@@ -7,14 +7,17 @@ hero:
   tagline: "이력서 및 개인 블로그입니다."
   actions:
     - theme: brand
+      text: 프로젝트 보기
+      link: /projects
+    - theme: alt
       text: 이력서 보기
       link: /resume
     - theme: alt
-      text: 블로그 바로가기
-      link: /blog/
-    - theme: alt
       text: 기술블로그 바로가기
       link: /tech/
+    - theme: alt
+      text: 일상 블로그
+      link: /blog/
 
 features:
   - title: System Engineer

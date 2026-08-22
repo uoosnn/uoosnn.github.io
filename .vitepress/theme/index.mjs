@@ -2,6 +2,10 @@ import DefaultTheme from 'vitepress/theme'
 import './custom.css'
 import GiscusComment from './components/GiscusComment.vue'
 import WebGLCanvas from './components/WebGLCanvas.vue'
+import ReadingTime from './components/ReadingTime.vue'
+import NotionTag from './components/NotionTag.vue'
+import TagFilterBoard from './components/TagFilterBoard.vue'
+import ProjectShowcase from './components/ProjectShowcase.vue'
 import { useRoute, useData } from 'vitepress'
 import { h, watch, onMounted, nextTick } from 'vue'
 
@@ -43,6 +47,9 @@ export default {
     watch(() => route.path, updateLandmark)
 
     return h(DefaultTheme.Layout, null, {
+      'doc-before': () => {
+        return h(ReadingTime)
+      },
       'doc-after': () => {
         // /blog/ 또는 /tech/ 하위 게시글에서만 표시 (index.md 제외)
         const isBlogOrTech = (route.path.includes('/blog/') || route.path.includes('/tech/')) &&
@@ -59,6 +66,11 @@ export default {
   },
   enhanceApp({ app }) {
     app.component('WebGLCanvas', WebGLCanvas)
+    app.component('ReadingTime', ReadingTime)
+    app.component('NotionTag', NotionTag)
+    app.component('TagFilterBoard', TagFilterBoard)
+    app.component('ProjectShowcase', ProjectShowcase)
   }
 }
+
 

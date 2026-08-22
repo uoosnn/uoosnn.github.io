@@ -7,14 +7,17 @@ hero:
   tagline: "履歴書および個人ブログです。"
   actions:
     - theme: brand
+      text: プロジェクトを見る
+      link: /ja/projects
+    - theme: alt
       text: 履歴書を見る
       link: /ja/resume
     - theme: alt
-      text: ブログへ行く
-      link: /ja/blog/
-    - theme: alt
       text: 技術ブログへ
       link: /ja/tech/
+    - theme: alt
+      text: 日常ブログ
+      link: /ja/blog/
 
 features:
   - title: System Engineer

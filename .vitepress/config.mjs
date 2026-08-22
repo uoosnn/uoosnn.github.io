@@ -300,8 +300,10 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/' },
           { text: 'Resume', link: '/resume' },
+          { text: 'Projects', link: '/projects' },
           { text: 'Blog', link: '/blog/' },
-          { text: 'Tech', link: '/tech/' }
+          { text: 'Tech', link: '/tech/' },
+          { text: 'Tags', link: '/tags' }
         ],
         sidebar: {
           '/blog/': [
@@ -331,8 +333,10 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/en/' },
           { text: 'Resume', link: '/en/resume' },
+          { text: 'Projects', link: '/en/projects' },
           { text: 'Blog', link: '/en/blog/' },
-          { text: 'Tech', link: '/en/tech/' }
+          { text: 'Tech', link: '/en/tech/' },
+          { text: 'Tags', link: '/en/tags' }
         ],
         sidebar: {
           '/en/blog/': [
@@ -362,8 +366,10 @@ export default defineConfig({
         nav: [
           { text: 'Home', link: '/ja/' },
           { text: 'Resume', link: '/ja/resume' },
+          { text: 'Projects', link: '/ja/projects' },
           { text: 'Blog', link: '/ja/blog/' },
-          { text: 'Tech', link: '/ja/tech/' }
+          { text: 'Tech', link: '/ja/tech/' },
+          { text: 'Tags', link: '/ja/tags' }
         ],
         sidebar: {
           '/ja/blog/': [

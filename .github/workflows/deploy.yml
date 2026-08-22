@@ -66,3 +66,22 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+      - name: Send Telegram Notification
+        if: always() && env.TELEGRAM_BOT_TOKEN != '' && env.TELEGRAM_CHAT_ID != ''
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          STATUS: ${{ job.status }}
+          COMMIT_MSG: ${{ github.event.head_commit.message }}
+        run: |
+          if [ "$STATUS" = "success" ]; then
+            TEXT="🚀 *[uoosnn.com]* 블로그 배포 완료!%0A📝 *Commit:* ${COMMIT_MSG}%0A🔗 *URL:* https://www.uoosnn.com"
+          else
+            TEXT="❌ *[uoosnn.com]* 배포 실패!%0A📝 *Commit:* ${COMMIT_MSG}%0A⚠️ GitHub Actions 로그를 확인해주세요."
+          fi
+          curl -s -X POST "https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage" \
+            -d "chat_id=${TELEGRAM_CHAT_ID}" \
+            -d "parse_mode=Markdown" \
+            -d "text=${TEXT}" || true
+

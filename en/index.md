@@ -7,14 +7,17 @@ hero:
   tagline: "Resume & Personal Blog"
   actions:
     - theme: brand
+      text: View Projects
+      link: /en/projects
+    - theme: alt
       text: View Resume
       link: /en/resume
     - theme: alt
-      text: Go to Blog
-      link: /en/blog/
-    - theme: alt
-      text: Tech Blog
+      text: Tech Articles
       link: /en/tech/
+    - theme: alt
+      text: Blog
+      link: /en/blog/
 
 features:
   - title: System Engineer
