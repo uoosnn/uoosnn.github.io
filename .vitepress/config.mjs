@@ -50,10 +50,13 @@ function getBlogSidebar(dir = './blog', urlPrefix = '/blog') {
       time = stat.mtimeMs
     }
 
+    const isDraft = /draft:\s*true/i.test(content)
+    if (isDraft) return null
+
     const name = file.replace(/\.md$/, '')
 
     return { file, name, title, time, mtimeMs: stat.mtimeMs }
-  }).sort((a, b) => {
+  }).filter(Boolean).sort((a, b) => {
     if (b.time !== a.time) return b.time - a.time
     return b.mtimeMs - a.mtimeMs
   })
@@ -95,7 +98,7 @@ async function generateRSSFeed(config) {
     }
 
     posts
-      .filter(p => !p.url.endsWith('/blog/') && p.url !== '/blog/')
+      .filter(p => !p.url.endsWith('/blog/') && p.url !== '/blog/' && !p.frontmatter?.draft && p.frontmatter?.draft !== 'true')
       .sort((a, b) => +new Date(b.frontmatter?.date || 0) - +new Date(a.frontmatter?.date || 0))
       .forEach(({ url, frontmatter, html }) => {
         feed.addItem({
@@ -174,35 +177,65 @@ export default defineConfig({
     })]
   ],
 
-  // sitemap 자동 생성 (Google Search Console 등록용, 404 및 README 색인 제외)
+  // sitemap 자동 생성 (Google Search Console 최적화: 우선순위, 갱신주기, 필터링)
   sitemap: {
     hostname: SITE_URL,
     transformItems(items) {
-      return items.filter(item => {
-        const url = item.url;
-        return !url.endsWith('/README') && url !== 'README' && !url.includes('404');
-      });
+      return items
+        .filter(item => {
+          const url = item.url;
+          return !url.endsWith('/README') && url !== 'README' && !url.includes('404');
+        })
+        .map(item => {
+          const isHome = item.url === '' || item.url === 'ja/' || item.url === 'en/' || item.url === 'ja' || item.url === 'en';
+          const isPost = item.url.includes('/blog/') || item.url.includes('/tech/');
+          return {
+            ...item,
+            changefreq: isHome ? 'daily' : isPost ? 'weekly' : 'monthly',
+            priority: isHome ? 1.0 : isPost ? 0.8 : 0.6
+          };
+        });
     }
   },
 
   // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang, JSON-LD, Noindex) 자동 주입
   transformPageData(pageData) {
-    const route = pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '');
-    const canonicalUrl = `${SITE_URL}/${route}`;
-    pageData.frontmatter.head ??= [];
-    
-    // Canonical URL
-    pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);
-    
-    // Hreflang Tags
-    const baseRoute = route.replace(/^(en\/|ja\/)/, '');
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: `${SITE_URL}/${baseRoute}` }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: `${SITE_URL}/en/${baseRoute}` }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: `${SITE_URL}/ja/${baseRoute}` }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: `${SITE_URL}/${baseRoute}` }]);
+    // 1. 경로 정규화 함수 (URL 인코딩 및 Trailing Slash 표준화)
+    const normalizeUrl = (pathStr) => {
+      const clean = pathStr.replace(/^\/+/, '').replace(/\/+$/, '');
+      if (!clean) return `${SITE_URL}/`;
+      // 디렉토리 인덱스 여부 확인
+      if (clean === 'ja' || clean === 'en' || clean === 'tech' || clean === 'blog') {
+        return `${SITE_URL}/${clean}/`;
+      }
+      return `${SITE_URL}/${encodeURI(clean)}`;
+    };
 
-    // 404 및 README 페이지에 noindex 주입
-    if (pageData.relativePath === '404.md' || pageData.relativePath === 'README.md') {
+    const isIndex = pageData.relativePath.endsWith('index.md');
+    let rawRoute = pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '');
+    rawRoute = rawRoute.replace(/\/+$/, '');
+
+    const canonicalUrl = normalizeUrl(rawRoute);
+    pageData.frontmatter.head ??= [];
+
+    // Canonical URL (표준화 태그)
+    pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);
+
+    // Hreflang 상호 참조 태그 (ko, en, ja, x-default)
+    const baseRoute = rawRoute.replace(/^(en\/|ja\/|en|ja)/, '').replace(/^\/+/, '');
+    const koUrl = normalizeUrl(baseRoute);
+    const enUrl = normalizeUrl(baseRoute ? `en/${baseRoute}` : 'en');
+    const jaUrl = normalizeUrl(baseRoute ? `ja/${baseRoute}` : 'ja');
+
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: koUrl }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: enUrl }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: jaUrl }]);
+    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: koUrl }]);
+
+    // 404, README, draft(초안) 및 noindex 페이지에 robots noindex 자동 주입
+    const isDraft = pageData.frontmatter.draft === true || pageData.frontmatter.draft === 'true';
+    const isNoIndex = pageData.frontmatter.noindex === true || pageData.frontmatter.noindex === 'true';
+    if (pageData.relativePath === '404.md' || pageData.relativePath === 'README.md' || isDraft || isNoIndex) {
       pageData.frontmatter.head.push(['meta', { name: 'robots', content: 'noindex, nofollow' }]);
     }
 
@@ -212,14 +245,18 @@ export default defineConfig({
       const title = pageData.frontmatter.title || pageData.title || 'Uoosnn Post';
       const description = pageData.frontmatter.description || pageData.description || title;
       const datePublished = pageData.frontmatter.date ? new Date(pageData.frontmatter.date).toISOString() : new Date().toISOString();
-      
+      const lang = pageData.relativePath.startsWith('ja/') ? 'ja-JP' : pageData.relativePath.startsWith('en/') ? 'en-US' : 'ko-KR';
+
       const jsonLd = {
         '@context': 'https://schema.org',
         '@type': pageData.relativePath.includes('tech') ? 'TechArticle' : 'BlogPosting',
         'headline': title,
         'description': description,
         'url': canonicalUrl,
+        'inLanguage': lang,
         'datePublished': datePublished,
+        'dateModified': datePublished,
+        'keywords': pageData.frontmatter.tags ? pageData.frontmatter.tags.join(', ') : 'Tech, Engineering, Cloud',
         'author': {
           '@type': 'Person',
           'name': 'Uoosnn',
@@ -228,7 +265,11 @@ export default defineConfig({
         'publisher': {
           '@type': 'Organization',
           'name': 'Uoosnn',
-          'url': SITE_URL
+          'url': SITE_URL,
+          'logo': {
+            '@type': 'ImageObject',
+            'url': `${SITE_URL}/favicon.ico`
+          }
         },
         'mainEntityOfPage': {
           '@type': 'WebPage',

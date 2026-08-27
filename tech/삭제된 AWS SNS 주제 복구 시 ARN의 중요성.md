@@ -1,67 +1,76 @@
 ---
 title: "삭제된 AWS SNS 주제 복구 시 ARN의 중요성"
+description: "CloudWatch 알람 액션이 Name이 아닌 Immutable ARN을 바라봄으로써 발생하는 장애 메커니즘과 일괄 복구 절차"
 date: 2026-07-08
 tags: [Tech, Troubleshooting, Incident Report, AWS, SNS, CloudWatch, ARN]
 ---
 
 # 삭제된 AWS SNS 주제 복구 시 ARN의 중요성
 
+::: tip 1줄 요약
+AWS SNS 주제(Topic)를 삭제한 뒤 동일한 이름으로 다시 생성해도, 기존 CloudWatch 알람은 **이전 리소스의 고유 ARN**을 참조하므로 **알람 액션을 반드시 명시적으로 재설정**해야 한다.
+:::
 
-### 문제 상황: 삭제된 SNS 주제와 동작하지 않는 CloudWatch 알람
+## 1. 인시던트 개요
 
-최근 한 클라이언트 환경에서 모니터링 알람에 사용되던 AWS SNS(Simple Notification Service) 주제(Topic)가 실수로 삭제되는 인시던트가 발생했다. 가장 먼저 시도한 복구 전략은 삭제된 주제와 '동일한 이름'으로 새 주제를 생성하는 것이었다. CloudWatch 알람이 주제의 '이름'을 참조할 것이라는 가설에 기반한 조치였다.
+모니터링 알람용 AWS SNS 주제가 실수로 삭제되는 일이 발생했다. 가장 빠른 복구를 위해 삭제된 주제와 **'동일한 이름'**으로 새 주제를 생성하고 이메일 및 Lambda 구독을 다시 연결했다.
 
-하지만 이 방법은 완벽한 해결책이 아니었다. 기존에 설정되어 있던 수많은 CloudWatch 알람들이 새로 생성된 SNS 주제로 알림을 정상적으로 전송하지 못하는 문제가 발견되었다. 이 트러블슈팅 로그는 동일한 이름으로 리소스를 재생성했음에도 불구하고 왜 서비스 연동이 실패했는지, 그 원인인 **ARN(Amazon Resource Name)**의 개념과 올바른 복구 절차를 기록하기 위해 작성되었다.
+겉보기에는 모든 구성이 정상 복구된 것처럼 보였으나, 실제 테스트 시 **기존에 설정되어 있던 수많은 CloudWatch 알람들이 새로 생성된 SNS 주제로 알림을 전송하지 못하고 침묵하는 장애**가 발생했다.
 
-### 초기 대응과 잘못된 가정
+```
+[장애 발생 흐름]
+1. SNS 주제 실수 삭제 (기존 고유 ARN 소멸)
+2. 동일 이름으로 주제 재생성 (새로운 내부 ARN 발급)
+3. CloudWatch 알람 발동 ──(알림 시도)──✖ [과거 ARN 참조로 인한 드롭]
+```
 
-삭제된 SNS 주제의 구독자 정보를 파악하기 위해 가장 먼저 AWS CloudTrail 로그를 확인했다. `DeleteTopic` 이벤트는 확인되었으나, 해당 주제의 생성 또는 수정 시점의 로그(`CreateTopic`, `SetTopicAttributes` 등)는 보존 기간(90일) 만료로 인해 소실된 상태였다. 구독자 목록을 즉시 복원할 수 없는 상황에서, 우리는 가장 논리적으로 보이는 다음 가설을 세웠다.
+## 2. 근본 원인: Name vs Immutable ARN
 
-> "CloudWatch 알람은 SNS 주제의 '이름'을 기준으로 알림을 전송할 것이다. 따라서 동일한 이름으로 주제를 재생성하면, 기존 알람 설정 변경 없이도 자동으로 새로운 주제를 인식하고 알림을 보낼 것이다."
+CloudWatch 알람의 '작업(Action)' 설정은 사람이 지정하는 리소스 이름(Name)이 아닌, AWS 전역 고유 식별자인 **ARN(Amazon Resource Name)**을 저장한다.
 
-이 가설에 따라 삭제된 주제와 똑같은 이름으로 새 SNS 주제를 생성했다.
+* **이름(Name)**: 사용자가 지정하는 식별자로, 삭제 후 동일 이름으로 재사용 가능
+* **ARN(Amazon Resource Name)**: 리소스 생성 시 고유하게 부여되는 불변의 ID
 
-### 근본 원인: 이름(Name)이 아닌 ARN(Amazon Resource Name)
+동일한 이름으로 주제를 다시 생성하더라도, AWS 내부적으로는 완전히 새로운 리소스가 생성된 것이므로 기존 CloudWatch 알람 액션은 **더 이상 존재하지 않는 과거의 대상(Dangling ARN)**을 가리키게 된다.
 
-그러나 테스트 결과, 기존 CloudWatch 알람들은 여전히 알림을 보내지 못했다. 원인은 AWS 리소스 관리의 핵심 개념인 **ARN**에 있었다.
+```
+- 기존 알람 액션 Target : arn:aws:sns:ap-northeast-2:123456789012:OLD-TOPIC-ID (삭제됨)
+- 새로 생성된 주제 ARN  : arn:aws:sns:ap-northeast-2:123456789012:NEW-TOPIC-ID (미연결)
+```
 
--   **이름(Name)**: 사용자가 지정하는 식별자로, 리전 내에서 고유하지만 삭제 후 재사용이 가능하다.
--   **ARN(Amazon Resource Name)**: AWS 리소스가 생성될 때마다 부여되는 전역적으로 고유한 ID이다. 리소스의 '주민등록번호'와 같아서, 한번 삭제된 리소스의 ARN은 영원히 사라지며, 같은 이름으로 리소스를 새로 만들어도 완전히 새로운 ARN이 할당된다.
+## 3. 실전 복구 및 검증 절차
 
-CloudWatch 알람의 '작업(Action)' 설정은 SNS 주제의 이름이 아닌, 고유 식별자인 **ARN**을 저장한다.
+### Step 1. 구독자 정보 확보
+삭제된 SNS 주제의 생성 이력이 90일을 초과하여 CloudTrail 로그가 만료되었다면, IaC(Terraform/CloudFormation) 코드나 배포 설정 문서를 통해 기존 구독자 목록(이메일, Lambda, SQS 등)을 신속히 확보해야 한다.
 
--   **기존 알람 설정**: `arn:aws:sns:ap-northeast-2:123456789012:OLD-TOPIC-UNIQUE-ID`
--   **주제 삭제**: 위 ARN은 더 이상 존재하지 않는 리소스를 가리키게 됨.
--   **동일 이름으로 주제 재생성**: `arn:aws:sns:ap-northeast-2:123456789012:NEW-TOPIC-DIFFERENT-ID` 라는 새로운 ARN이 부여됨.
+### Step 2. SNS 주제 및 구독 재생성
+동일한 이름으로 SNS 주제를 생성하고, 확보된 구독자 정보를 바탕으로 구독(Subscription)을 모두 다시 추가한다.
 
-결과적으로, 기존의 모든 CloudWatch 알람은 여전히 존재하지 않는 '과거의 ARN'을 바라보고 있었기 때문에 알림 전송이 실패했던 것이다. 이것이 이번 **트러블슈팅**의 핵심 발견이었다.
+### Step 3. CloudWatch 알람 작업(Action) 일괄 갱신
+삭제된 주제를 바라보던 모든 CloudWatch 알람의 액션을 식별하여 신규 SNS ARN으로 업데이트한다. 알람이 많을 경우 AWS CLI로 일괄 갱신한다.
 
-### 올바른 SNS 주제 복구 절차
+```bash
+# 특정 알람의 액션을 신규 SNS ARN으로 업데이트
+aws cloudwatch put-metric-alarm \
+  --alarm-name "EC2-CPU-High-Alarm" \
+  --alarm-actions "arn:aws:sns:ap-northeast-2:123456789012:NEW-TOPIC-ID"
+```
 
-이번 인시던트를 통해 정립된 올바른 **AWS SNS 주제 복구** 절차는 다음과 같다.
+### Step 4. 강제 트리거를 통한 수신 테스트
+실제 인시던트 발생 전에 `set-alarm-state` 명령어로 알람을 강제 발동시켜 모든 구독자에게 정상 수신되는지 즉시 검증한다.
 
-1.  **구독 정보 확보**: 가장 중요한 단계이다. CloudTrail 로그가 만료되었다면, IaC(Infrastructure as Code) 코드, 내부 문서, 또는 서비스 담당자를 통해 기존 구독자(이메일, Lambda, SQS 등) 목록을 반드시 확보해야 한다. 이번 케이스에서는 다행히 담당자가 구독자 정보를 알고 있어 복구가 가능했다.
+```bash
+# 알람 상태를 강제로 ALARM으로 변경하여 테스트
+aws cloudwatch set-alarm-state \
+  --alarm-name "EC2-CPU-High-Alarm" \
+  --state-value ALARM \
+  --state-reason "Testing SNS notification recovery"
+```
 
-2.  **SNS 주제 및 구독 재생성**: 확보된 정보를 바탕으로 동일한 이름의 SNS 주제를 새로 생성하고, 모든 구독을 다시 추가한다.
+## 4. 핵심 체크포인트 (Gotchas)
 
-3.  **CloudWatch 알람 작업(Action) 업데이트**: 이 단계가 핵심이다.
-    -   삭제된 주제를 사용하던 모든 CloudWatch 알람을 식별한다.
-    -   각 알람의 '작업' 설정으로 이동하여, 존재하지 않는 이전 SNS 주제(ARN)를 제거한다.
-    -   새로 생성한 SNS 주제(새로운 ARN)를 알림 대상으로 다시 추가하고 저장한다.
-
-4.  **검증 테스트**: 모든 설정이 완료된 후, AWS CLI를 사용하여 특정 알람의 상태를 강제로 변경하여 모든 구독자에게 알림이 정상적으로 수신되는지 확인한다.
-
-    ```bash
-    # 알람 상태를 강제로 ALARM으로 변경하여 테스트
-    aws cloudwatch set-alarm-state \
-      --alarm-name "My-EC2-Status-Check-Alarm" \
-      --state-value ALARM \
-      --state-reason "Testing SNS notification recovery"
-    ```
-
-### 결론
-
-이번 **트러블슈팅** 경험은 AWS 리소스를 다룰 때 '이름'과 'ARN'의 차이를 명확히 인지하는 것이 얼마나 중요한지 보여주었다. 많은 AWS 서비스 연동은 재사용 가능한 이름이 아닌, 불변의 고유 식별자인 **ARN**을 기반으로 동작한다. 따라서 리소스 삭제 후 재생성 시에는 해당 리소스를 참조하는 모든 서비스의 설정을 반드시 확인하고 새로운 **ARN**으로 업데이트하는 과정이 필수적이다.
+1. **AWS 리소스 재사용의 함정**: 이름이 같다고 해서 기존 서비스 간의 링크나 권한이 자동으로 복원되지 않는다.
+2. **IaC 기반 인프라 관리 권장**: 콘솔에서 수동으로 생성한 리소스는 삭제 시 복구와 추적이 어려우므로, 알람 및 알림 파이프라인은 코드로 관리하는 것이 안전하다.
 
 ---
 *게시된 시간: 2026-07-08 09:35:53*

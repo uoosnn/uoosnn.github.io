@@ -1,42 +1,89 @@
 ---
-title: "Forti 방화벽을 활용한 네트워크 보안 구성"
+title: "FortiGate 방화벽을 활용한 NAT 전환 및 Zone 기반 네트워크 보안 구성"
+description: "Forti-60F 기반 Transparent에서 NAT 모드 전환, 3-Tier Zone(WAS/DB/DEV) 분할 및 VIP(Virtual IP) 포워딩 실전 가이드"
 date: 2026-05-17
-tags: [Tech, AI, 기술분석]
+tags: [Network, Security, Firewall, FortiGate, NAT, VPN, Architecture]
 ---
 
-# Forti 방화벽을 활용한 네트워크 보안 구성
+# FortiGate 방화벽을 활용한 NAT 전환 및 Zone 기반 네트워크 보안 구성
 
+::: tip 1줄 요약
+단순 브리지(Transparent) 모드로 동작하던 FortiGate-60F를 **NAT/Route 모드로 전환**하고, 물리 포트별로 **WAS / DB / DEV Zone을 격리**한 뒤 VIP(Virtual IP) 1:1 NAT 및 세부 정책을 적용하여 보안 경계를 구축한 실전 구성안.
+:::
 
-FortiGate 방화벽을 기반으로 고객의 보안 요구사항에 맞춰 네트워크를 구성하는 방법에 대해 정리합니다. 이 글에서는 내부 서버의 IP를 사설로 구성하고, 네트워크 영역을 Zone으로 분할하여 보안을 강화하는 과정을 다룹니다.
+## 1. 네트워크 보안 구성 개요
 
-## 시작하며: 펌웨어 업데이트 및 초기 설정
+기존 공인 IP 직접 할당 방식에서 탈피하여 내부 서버를 사설 IP 대역(`10.0.0.0/8`)으로 은닉하고, 용도별 Zone 분할을 통해 수평 이동(Lateral Movement) 공격을 원천 차단하는 구성을 진행했다.
 
-본격적인 구성에 앞서, 가장 먼저 방화벽의 펌웨어를 최신 버전으로 업데이트하고 기본적인 초기 설정을 진행합니다. 이는 안정적이고 안전한 네트워크 환경을 구축하기 위한 필수적인 첫 단계입니다.
+```
+[FortiGate 60F Zone 토폴로지]
+                        Internet (WAN 1 / 공인 IP)
+                                   │
+                         ┌─────────▼─────────┐
+                         │   FortiGate-60F   │
+                         │  (NAT/Route Mode) │
+                         └──┬──────┬──────┬──┘
+                            │      │      │
+           ┌────────────────┘      │      └────────────────┐
+           ▼                       ▼                       ▼
+    [WAS Zone (DMZ)]       [DB Zone (격리)]        [DEV Zone (개발)]
+     10.0.1.0/24             10.0.2.0/24             10.0.100.0/24
+    (공인 VIP 80/443 허용)  (WAS에서의 3306/1433만 허용) (SSL-VPN 접근)
+```
 
-## 1. 내부 IP 사설 구성 (NAT 설정)
+---
 
-서버 보안을 위해 내부에서는 사설 IP를 사용하고, 외부에서는 공인 IP를 통해 접근할 수 있도록 NAT(Network Address Translation) 설정을 적용합니다.
+## 2. 핵심 단계별 구성 절차
 
-- **모드 변경**: 현재 방화벽이 TP(Transparent/Bridge) 모드로 동작 중인 경우, NAT 설정이 가능한 모드로 변경해야 합니다.
-- **효과**: 이 설정을 통해 내부 서버들은 사설 IP 대역을 사용하게 되어 외부로부터의 직접적인 접근을 차단하고 보안을 강화할 수 있습니다.
+### 1) 방화벽 모드 전환: TP(Transparent) ➔ NAT/Route 모드
+* 브리지 모드에서는 L3 라우팅과 NAT가 불가하므로, 인터페이스에 내부 게이트웨이 IP를 할당할 수 있도록 NAT 모드로 전환.
+* 기존 상단 라우터(Cisco 1900 등)의 기본 게이트웨이 역할을 FortiGate가 직접 수행하도록 통합.
 
-## 2. Zone 분할을 통한 네트워크 세분화
+### 2) 물리 포트별 Zone 분할 및 사설 IP 서브넷 할당
+`internal` 기본 스위치 포트를 분리하여 각 업무망별 독립 인터페이스/Zone을 생성한다.
 
-물리적인 포트별로 Zone을 구성하여 네트워크를 논리적으로 분할합니다. 이를 통해 각 Zone 간의 통신을 세밀하게 제어할 수 있습니다.
+```
+- Port 1 (WAS Zone) : 10.0.1.1/24 (VLAN 또는 전용 L2 스위치 연동)
+- Port 2 (DB Zone)  : 10.0.2.1/24 (인터넷 직접 아웃바운드 차단)
+- Port 3 (DEV Zone) : 10.0.100.1/24
+```
 
-- **Zone 구성**: 현재 사용 중인 `internal` Zone 외에, 사용 가능한 포트를 활용하여 최대 7개의 추가 Zone을 구성할 수 있습니다.
-- **사설 IP 대역 할당**: 각 Zone에 독립적인 사설 IP 대역을 할당할 수 있습니다.
-  - 예시: `was (10.0.1.x/24)`, `db (10.0.2.x/24)`, `dev (10.0.100.x/24)`
-- **정책 기반 통신**: Zone 간의 통신은 방화벽 정책을 통해서만 허용되므로, 허가되지 않은 내부 통신을 효과적으로 차단할 수 있습니다.
-- **필요 장비**: Zone 하위에 다수의 서버를 연결해야 할 경우, 스위치 2대의 추가 임대가 필요할 수 있습니다.
+### 3) VIP (Virtual IP) 인바운드 포트포워딩 설정
+외부 공인 IP로 인입되는 웹 트래픽(`80`, `443`)을 WAS 사설 IP로 1:1 매핑한다.
 
-## 3. 부가 기능: SSL-VPN 활용
+```ini
+# FortiGate CLI 예시: WAS VIP 생성 및 정책 매핑
+config firewall vip
+    edit "VIP_WAS_HTTPS"
+        set extip 203.0.113.10
+        set mappedip "10.0.1.10"
+        set extintf "wan1"
+        set portforward enable
+        set protocol tcp
+        set extport 443
+        set mappedport 443
+    next
+end
+```
 
-사용 중인 Forti-60F 장비는 SSL-VPN 기능을 지원합니다. 이를 통해 외부에서도 안전하게 내부 네트워크에 접속할 수 있는 환경을 구축할 수 있으며, 상세한 설정은 보안팀과의 협의가 필요합니다.
+### 4) Zone 간 트래픽 제어 정책 (Inter-Zone Firewall Policy)
+* **WAS ➔ DB**: 지정된 DB 포트(`TCP 3306`, `TCP 1433`)만 화이트리스트 허용.
+* **DB ➔ External**: 인터넷 직접 연결 완전 차단.
+* **External ➔ All**: 기본 Deny All, 오직 허가된 VIP 포트만 허용.
 
-## 결론
+---
 
-위와 같이 Forti 방화벽의 NAT, Zone 분할, 정책 설정을 통해 강력한 네트워크 보안 환경을 구축할 수 있습니다. 이러한 구성이 완료되면, 기존에 사용하던 Cisco 1900과 같은 별도의 라우터 장비는 더 이상 필요하지 않을 수 있습니다.
+## 3. 원격 관리: SSL-VPN 터널 구성
+
+외부 엔지니어의 원격 유지보수를 위해 FortiGate 내장 SSL-VPN 포털을 활성화하고, MFA(OTP) 연동 및 사설 IP 풀(`10.0.200.0/24`)을 할당하여 DEV/WAS Zone 접근만 인가한다.
+
+---
+
+## 4. 핵심 체크포인트 (Gotchas)
+
+1. **TP 모드 전환 시 세션 끊김**: Transparent 모드에서 NAT 모드로 전환할 때 모든 인터페이스 IP가 리셋될 수 있으므로, 반드시 로컬 콘솔(RJ45 콘솔 케이블) 연결 상태에서 작업해야 한다.
+2. **L2 스위치 분리**: 방화벽 하단에 서버 대수가 많을 경우 각 Zone별로 물리 스위치를 분리하거나, 관리형 스위치에서 802.1Q VLAN 태깅을 설정해야 브로드캐스트 도메인이 격리된다.
+3. **VIP와 방화벽 정책의 관계**: VIP 객체를 생성했더라도 `firewall policy`에서 WAN ➔ WAS Zone 방향으로 VIP를 목적지(Destination)로 명시하고 허용해 주어야 실제 패킷이 통과한다.
 
 ---
 *게시된 시간: 2026-05-17 08:11:32*

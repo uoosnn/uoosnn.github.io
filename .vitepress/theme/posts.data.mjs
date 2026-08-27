@@ -7,7 +7,8 @@ export default createContentLoader(['blog/*.md', 'tech/*.md', 'en/blog/*.md', 'e
     return raw
       .filter(p => {
         const url = p.url
-        return !url.endsWith('/') && !url.endsWith('index') && !url.endsWith('index.html')
+        const isDraft = p.frontmatter?.draft === true || p.frontmatter?.draft === 'true'
+        return !url.endsWith('/') && !url.endsWith('index') && !url.endsWith('index.html') && !isDraft
       })
       .map(p => {
         const title = p.frontmatter?.title || decodeURIComponent(p.url.split('/').pop().replace(/\.html$/, '').replace(/-/g, ' '))

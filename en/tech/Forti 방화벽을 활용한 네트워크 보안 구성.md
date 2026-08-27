@@ -1,46 +1,78 @@
 ---
-title: "Configuring Network Security Using a Forti Firewall"
+title: "Network Security Architecture with FortiGate: NAT Migration and 3-Tier Zone Segmentation"
+description: "How to migrate FortiGate-60F from Transparent to NAT mode, configure 3-tier Zone isolation (WAS/DB/DEV), and enforce Virtual IP (VIP) forwarding rules"
 date: 2026-05-17
-tags: [Tech, AI, 기술분석]
+tags: [Network, Security, Firewall, FortiGate, NAT, VPN, Architecture]
 ---
 
-# Configuring Network Security Using a Forti Firewall
+# Network Security Architecture with FortiGate: NAT Migration and 3-Tier Zone Segmentation
 
+::: tip 1-Line Summary
+Migrated FortiGate-60F from Transparent to **NAT/Route Mode**, segmented physical ports into isolated **WAS / DB / DEV Zones**, and enforced strict 1:1 Virtual IP (VIP) policies to establish enterprise-grade defense-in-depth.
+:::
 
-This document outlines how to configure a network based on a FortiGate firewall to meet customer security requirements. This article covers the process of configuring internal server IPs as private and enhancing security by segmenting the network into Zones.
+## 1. Security Architecture & Threat Model
 
-## Getting Started: Firmware Update and Initial Setup
+Eliminated direct public IP exposure across backend workloads by shifting instances into RFC1918 private subnets (`10.0.0.0/8`) and isolating subnets into dedicated firewall zones to block lateral movement.
 
-Before starting the main configuration, the first step is to update the firewall's firmware to the latest version and perform basic initial setup. This is an essential first step to building a stable and secure network environment.
+```
+[FortiGate 60F Zone Topology]
+                        Internet (WAN 1 / Public IP)
+                                   │
+                         ┌─────────▼─────────┐
+                         │   FortiGate-60F   │
+                         │  (NAT/Route Mode) │
+                         └──┬──────┬──────┬──┘
+                            │      │      │
+           ┌────────────────┘      │      └────────────────┐
+           ▼                       ▼                       ▼
+    [WAS Zone (DMZ)]       [DB Zone (Isolated)]    [DEV Zone (Internal)]
+     10.0.1.0/24             10.0.2.0/24             10.0.100.0/24
+    (Inbound VIP 80/443)    (3306 allowed from WAS)  (SSL-VPN Access)
+```
 
-## 1. Private Internal IP Configuration (NAT Setup)
+---
 
-For server security, we will use private IPs internally and apply Network Address Translation (NAT) settings to allow access from the outside via public IPs.
+## 2. Step-by-Step Configuration
 
-- **Mode Change**: If the firewall is currently operating in TP (Transparent/Bridge) mode, it must be changed to a mode that supports NAT configuration.
-- **Effect**: Through this configuration, internal servers will use a private IP range, blocking direct external access and enhancing security.
+### 1) Operating Mode: Transparent ➔ NAT/Route Mode
+Transition the appliance from L2 bridge mode to L3 routing/NAT mode to act as the primary network gateway.
 
-## 2. Network Segmentation through Zone Division
+### 2) Port Isolation & Subnet Allocation
+Break out physical switch interfaces into dedicated zones:
+* **Port 1 (WAS Zone)**: `10.0.1.1/24`
+* **Port 2 (DB Zone)**: `10.0.2.1/24` (Direct outbound internet blocked)
+* **Port 3 (DEV Zone)**: `10.0.100.1/24`
 
-The network is logically divided by creating Zones for each physical port. This allows for granular control over communication between each Zone.
+### 3) Virtual IP (VIP) Port Forwarding
+Map inbound web traffic from the public IP to the private WAS server:
 
-- **Zone Configuration**: In addition to the currently used `internal` Zone, up to 7 additional Zones can be configured using available ports.
-- **Private IP Range Assignment**: Independent private IP ranges can be assigned to each Zone.
-  - Example: `was (10.0.1.x/24)`, `db (10.0.2.x/24)`, `dev (10.0.100.x/24)`
-- **Policy-Based Communication**: Communication between Zones is only permitted through firewall policies, effectively blocking unauthorized internal traffic.
-- **Required Equipment**: If multiple servers need to be connected under a Zone, renting two additional switches may be necessary.
+```ini
+config firewall vip
+    edit "VIP_WAS_HTTPS"
+        set extip 203.0.113.10
+        set mappedip "10.0.1.10"
+        set extintf "wan1"
+        set portforward enable
+        set protocol tcp
+        set extport 443
+        set mappedport 443
+    next
+end
+```
 
-## 3. Additional Feature: SSL-VPN Utilization
+### 4) Inter-Zone Traffic Rules
+* **WAS ➔ DB**: Whitelist strictly required database ports (`TCP 3306`, `TCP 1433`).
+* **DB ➔ External**: Explicit Deny All.
+* **External ➔ All**: Implicit Deny All except defined VIP endpoints.
 
-The Forti-60F device in use supports the SSL-VPN feature. This allows for the creation of an environment where users can securely access the internal network from the outside. Detailed configuration requires consultation with the security team.
+---
 
-## Conclusion
+## 3. Gotchas & Engineering Checkpoints
 
-As described above, a robust network security environment can be established by configuring NAT, Zone division, and policies on the Forti firewall. Once this configuration is complete, a separate router device like the previously used Cisco 1900 may no longer be necessary.
+1. **Console Access During Mode Switch**: Switching from Transparent to NAT mode flushes interface configurations; always execute via local serial console.
+2. **VIP Policy Binding**: Creating a VIP object is insufficient; an explicit `firewall policy` referencing the VIP as the destination address must be active for packets to traverse.
 
 ---
 *Published: 2026-05-17 08:11:32*
-
----
-*Posted: 2026-08-15 13:57:00*
 *Updated: 2026-08-15 13:57:00*

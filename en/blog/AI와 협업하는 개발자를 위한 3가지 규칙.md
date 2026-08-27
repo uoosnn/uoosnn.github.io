@@ -1,39 +1,31 @@
 ---
-title: "3 Rules for Developers Collaborating with AI"
+title: "3 Essential Engineering Rules for Developing Software with AI Agents"
+description: "Treating AI code as Junior PRs, isolating changes with atomic Git checkpoints, and enforcing Test-Driven Verification pipelines"
 date: 2026-05-20
-tags: [Tech, Troubleshooting, Incident Report]
+tags: [AI, Git, CodeReview, Testing, Engineering, DevSecOps]
 ---
 
-# 3 Rules for Developers Collaborating with AI
+# 3 Essential Engineering Rules for Developing Software with AI Agents
 
+::: tip Key Insight
+Unlocking AI productivity without accumulating toxic technical debt requires **(1) Rigorous junior-level PR auditing, (2) Atomic Git rollback checkpoints, and (3) Test-Driven Verification (TDD)** before merge.
+:::
 
-While the introduction of AI into the development process has dramatically boosted productivity, it has also brought about new types of failures and technical debt. After experiencing an incident where applying AI-generated code without verification led to system-wide instability, we established clear guidelines for collaborating with AI. These are not mere recommendations but essential minimum safeguards that must be adhered to for stable service.
+## 1. Rule 1: Audit AI Code Like a Junior Pull Request
+* Never merge code you cannot explain line-by-line.
+* Verify dependency real existence on npm/PyPI to avoid Typosquatting attacks.
 
-### Rule 1. Do not fully trust AI's output.
-
-AI generates code at an astonishing speed, but its output often includes 'hallucinations.' This can manifest as calling non-existent APIs or suggesting the use of long-deprecated libraries.
-
-Merging such code without review is akin to embedding unpredictable bugs into the system. Therefore, all AI-generated code should be treated like a Pull Request from a junior developer. This means meticulous verification and unit testing, equivalent to peer review, are essential. AI is merely an excellent assistant developer; the ultimate responsibility lies with the developer merging the code.
-
-### Rule 2. Record all changes through version control.
-
-When collaborating with AI, using a Version Control System, especially `git`, is not an option but a necessity. It's common for existing features to malfunction or potential side effects to be discovered after applying AI-suggested code.
-
-By clearly committing work units through version control, you can immediately revert to a previous stable state if a problem arises. This provides a psychological and technical safety net, allowing you to experiment with and apply AI suggestions without fear. Instead of wasting time debugging problematic code, you can control risk with a single command.
-
+## 2. Rule 2: Isolate Every AI Experiment in Atomic Git Commits
 ```bash
-# In case of an issue, immediately revert to the last stable commit
-git reset --hard <last_stable_commit_hash>
+git checkout -b feature/ai-refactor
+git commit -m "chore: save clean state before AI modification"
+# Instant 1-second rollback if side-effects occur
+git reset --hard HEAD~1
 ```
 
-If no commits had been made, it would have taken several times more time and effort to identify which changes caused the problem.
-
-### Rule 3. Strictly adhere to Rules 1 and 2.
-
-The third rule re-emphasizes the importance of the preceding two rules. Even a single exception (skipping a review, missing a commit) during the development process can jeopardize the entire project. The productivity benefits gained from adopting AI are only meaningful when these two fundamental principles are strictly followed.
-
-In conclusion, AI is not replacing the developer's role but transforming it. The core competency of developers is now shifting from the ability to write code from scratch to the ability to **verify, improve, and safely integrate AI-generated code into the overall system.** These three rules represent the minimum discipline required to ensure stability in a changing development environment.
+## 3. Rule 3: Define Unit Test Contracts Before Implementation
+* Prompt the agent to generate Jest/pytest assertions for boundary conditions first, then prompt for code that passes 100% of those tests.
 
 ---
-*Posted: 2026-05-20 21:13:55*
+*Published: 2026-05-20 21:13:55*
 *Updated: 2026-08-15 13:57:00*
