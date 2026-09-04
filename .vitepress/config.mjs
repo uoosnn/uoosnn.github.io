@@ -177,7 +177,7 @@ export default defineConfig({
     })]
   ],
 
-  // sitemap 자동 생성 (Google Search Console 최적화: 우선순위, 갱신주기, 필터링)
+  // sitemap 자동 생성 (Google Search Console 최적화: lastmod 필수 속성, 갱신주기, 필터링)
   sitemap: {
     hostname: SITE_URL,
     transformItems(items) {
@@ -189,8 +189,13 @@ export default defineConfig({
         .map(item => {
           const isHome = item.url === '' || item.url === 'ja/' || item.url === 'en/' || item.url === 'ja' || item.url === 'en';
           const isPost = item.url.includes('/blog/') || item.url.includes('/tech/');
+          
+          // lastmod 속성 추가 (Google Search Console 권장 규격)
+          const lastmod = item.lastmod ? new Date(item.lastmod).toISOString() : new Date().toISOString();
+
           return {
             ...item,
+            lastmod,
             changefreq: isHome ? 'daily' : isPost ? 'weekly' : 'monthly',
             priority: isHome ? 1.0 : isPost ? 0.8 : 0.6
           };
@@ -198,14 +203,16 @@ export default defineConfig({
     }
   },
 
-  // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang, JSON-LD, Noindex) 자동 주입
+  // 모든 페이지 빌드 시 SEO 메타 태그(Canonical, Hreflang, Open Graph, JSON-LD, Noindex) 자동 주입
   transformPageData(pageData) {
-    // 1. 경로 정규화 함수 (URL 인코딩 및 Trailing Slash 표준화)
-    const normalizeUrl = (pathStr) => {
+    // 1. 경로 정규화 함수 (모든 디렉토리 인덱스에 Trailing Slash 일관 보장)
+    const normalizeUrl = (pathStr, isDirectory = false) => {
       const clean = pathStr.replace(/^\/+/, '').replace(/\/+$/, '');
       if (!clean) return `${SITE_URL}/`;
-      // 디렉토리 인덱스 여부 확인
-      if (clean === 'ja' || clean === 'en' || clean === 'tech' || clean === 'blog') {
+
+      // 디렉토리 인덱스 여부 확인 (en/tech, ja/blog, tech, blog, en, ja 등)
+      const isDir = isDirectory || /^(en\/|ja\/)?(tech|blog)$/.test(clean) || clean === 'en' || clean === 'ja';
+      if (isDir) {
         return `${SITE_URL}/${clean}/`;
       }
       return `${SITE_URL}/${encodeURI(clean)}`;
@@ -215,22 +222,57 @@ export default defineConfig({
     let rawRoute = pageData.relativePath.replace(/index\.md$/, '').replace(/\.md$/, '');
     rawRoute = rawRoute.replace(/\/+$/, '');
 
-    const canonicalUrl = normalizeUrl(rawRoute);
+    const canonicalUrl = normalizeUrl(rawRoute, isIndex);
     pageData.frontmatter.head ??= [];
 
-    // Canonical URL (표준화 태그)
+    // Canonical URL (표준화 태그 - 301 리디렉션 대상 방지)
     pageData.frontmatter.head.push(['link', { rel: 'canonical', href: canonicalUrl }]);
 
-    // Hreflang 상호 참조 태그 (ko, en, ja, x-default)
+    // Hreflang 상호 참조 태그 (ko, en, ja, x-default) - 실제 파일 존재 여부 검증
     const baseRoute = rawRoute.replace(/^(en\/|ja\/|en|ja)/, '').replace(/^\/+/, '');
-    const koUrl = normalizeUrl(baseRoute);
-    const enUrl = normalizeUrl(baseRoute ? `en/${baseRoute}` : 'en');
-    const jaUrl = normalizeUrl(baseRoute ? `ja/${baseRoute}` : 'ja');
+    const isBaseDir = isIndex || /^(tech|blog)$/.test(baseRoute);
 
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: koUrl }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: enUrl }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: jaUrl }]);
-    pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: koUrl }]);
+    const checkFileExists = (langPrefix) => {
+      let targetFile = '';
+      if (isIndex) {
+        targetFile = langPrefix ? `${langPrefix}/${baseRoute ? baseRoute + '/' : ''}index.md` : (baseRoute ? `${baseRoute}/index.md` : 'index.md');
+      } else {
+        targetFile = langPrefix ? `${langPrefix}/${baseRoute}.md` : `${baseRoute}.md`;
+      }
+      return fs.existsSync(path.resolve(targetFile));
+    };
+
+    const hasKo = checkFileExists('');
+    const hasEn = checkFileExists('en');
+    const hasJa = checkFileExists('ja');
+
+    if (hasKo) {
+      const koUrl = normalizeUrl(baseRoute, isBaseDir);
+      pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ko', href: koUrl }]);
+      pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'x-default', href: koUrl }]);
+    }
+    if (hasEn) {
+      const enUrl = normalizeUrl(baseRoute ? `en/${baseRoute}` : 'en', isBaseDir);
+      pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'en', href: enUrl }]);
+    }
+    if (hasJa) {
+      const jaUrl = normalizeUrl(baseRoute ? `ja/${baseRoute}` : 'ja', isBaseDir);
+      pageData.frontmatter.head.push(['link', { rel: 'alternate', hreflang: 'ja', href: jaUrl }]);
+    }
+
+    // Open Graph & Twitter Cards 메타 태그 주입
+    const isPost = /(^|\/)(blog|tech)\/.+/.test(pageData.relativePath) && !pageData.relativePath.endsWith('index.md');
+    const pageTitle = pageData.frontmatter.title || pageData.title || 'Uoosnn';
+    const pageDesc = pageData.frontmatter.description || pageData.description || 'Software Engineer Portfolio & Blog';
+    
+    pageData.frontmatter.head.push(['meta', { property: 'og:title', content: pageTitle }]);
+    pageData.frontmatter.head.push(['meta', { property: 'og:description', content: pageDesc }]);
+    pageData.frontmatter.head.push(['meta', { property: 'og:url', content: canonicalUrl }]);
+    pageData.frontmatter.head.push(['meta', { property: 'og:type', content: isPost ? 'article' : 'website' }]);
+    pageData.frontmatter.head.push(['meta', { property: 'og:image', content: `${SITE_URL}/favicon.ico` }]);
+    pageData.frontmatter.head.push(['meta', { name: 'twitter:card', content: 'summary' }]);
+    pageData.frontmatter.head.push(['meta', { name: 'twitter:title', content: pageTitle }]);
+    pageData.frontmatter.head.push(['meta', { name: 'twitter:description', content: pageDesc }]);
 
     // 404, README, draft(초안) 및 noindex 페이지에 robots noindex 자동 주입
     const isDraft = pageData.frontmatter.draft === true || pageData.frontmatter.draft === 'true';
@@ -240,7 +282,6 @@ export default defineConfig({
     }
 
     // 블로그 및 기술 포스트 개별 항목에 대해 Article / BlogPosting Schema.org JSON-LD 자동 생성
-    const isPost = /(^|\/)(blog|tech)\/.+/.test(pageData.relativePath) && !pageData.relativePath.endsWith('index.md');
     if (isPost) {
       const title = pageData.frontmatter.title || pageData.title || 'Uoosnn Post';
       const description = pageData.frontmatter.description || pageData.description || title;
@@ -253,6 +294,7 @@ export default defineConfig({
         'headline': title,
         'description': description,
         'url': canonicalUrl,
+        'image': `${SITE_URL}/favicon.ico`,
         'inLanguage': lang,
         'datePublished': datePublished,
         'dateModified': datePublished,

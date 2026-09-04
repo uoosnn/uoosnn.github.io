@@ -2,6 +2,7 @@
   <component
     :is="clickable ? 'a' : 'span'"
     :href="clickable ? tagUrl : undefined"
+    :rel="clickable ? 'nofollow' : undefined"
     :class="['notion-tag', colorClass]"
   >
     <span class="tag-icon">#</span>

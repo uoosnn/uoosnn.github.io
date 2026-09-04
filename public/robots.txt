@@ -1,14 +1,9 @@
 User-agent: *
 Allow: /
-Disallow: /404
-Disallow: /en/404
-Disallow: /ja/404
 
-# Host definition
-Host: https://www.uoosnn.com
+# 쿼리 파라미터 URL(태그 필터링 등) 크롤링 차단 - 중복 색인 생성 방지
+Disallow: /*?*
+Disallow: /*?tag=*
 
-# Sitemaps and RSS Feeds
+# Sitemaps
 Sitemap: https://www.uoosnn.com/sitemap.xml
-Sitemap: https://www.uoosnn.com/feed.xml
-Sitemap: https://www.uoosnn.com/en/feed.xml
-Sitemap: https://www.uoosnn.com/ja/feed.xml

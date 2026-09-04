@@ -42,8 +42,10 @@ async function main() {
       process.exit(1);
     }
 
-    const urls = parsed.urlset.url.map(u => u.loc[0]);
-    console.log(`Found ${urls.length} URLs in sitemap.xml.`);
+    const urls = parsed.urlset.url
+      .map(u => u.loc[0])
+      .filter(u => !u.includes('?') && !u.includes('404'));
+    console.log(`Found ${urls.length} valid URLs in sitemap.xml.`);
 
     // 4. Authenticate with Google API
     if (!credentials.client_email || !credentials.private_key) {
