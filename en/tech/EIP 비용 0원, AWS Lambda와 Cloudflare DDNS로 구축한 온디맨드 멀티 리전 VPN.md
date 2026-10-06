@@ -39,7 +39,7 @@ Telegram User
                  ▼                                                                               ▼
      [AWS EC2 (Tokyo / Virginia)]                                                    [Cloudflare DNS REST API (Free)]
       1. ec2.start_instances()                                                       3. PATCH /dns_records
-      2. Wait for new Public IP allocation                                           4. Update vpn-tokyo.uoosnn.com A-record
+      2. Wait for new Public IP allocation                                           4. Update vpn-tokyo.example.com A-record
                  │                                                                               │
                  └───────────────────────────────────────┬───────────────────────────────────────┘
                                                          ▼
@@ -48,7 +48,7 @@ Telegram User
 ```
 
 ### Architectural Key Highlights
-* **Static `.ovpn` Profile**: By configuring `remote vpn-tokyo.uoosnn.com 1194` once in client configs, clients never need profile re-imports or modifications when EC2 allocates a new dynamic IP.
+* **Static `.ovpn` Profile**: By configuring `remote vpn-tokyo.example.com 1194` once in client configs, clients never need profile re-imports or modifications when EC2 allocates a new dynamic IP.
 * **Ultra-lightweight Package (0.77 MB)**: Used lightweight `requests` instead of heavyweight Telegram frameworks, compiled with `manylinux2014_x86_64` wheels to keep cold-start latency under 100ms.
 
 ---
@@ -68,7 +68,7 @@ Telegram User
   "service": "aws-vpn-telegram-bot",
   "status": "online",
   "config_check": {
-    "ALLOWED_CHAT_ID": 8771073288,
+    "ALLOWED_CHAT_ID": 123456789,
     "TELEGRAM_BOT_TOKEN_SET": true,
     "CLOUDFLARE_API_TOKEN_SET": false, // <-- Root cause identified!
     "AWS_TOKYO_INSTANCE_ID_SET": true
@@ -85,7 +85,7 @@ Telegram User
 # Cloudflare DNS A-record update payload
 payload = {
     "type": "A",
-    "name": "vpn-tokyo.uoosnn.com",
+    "name": "vpn-tokyo.example.com",
     "content": new_public_ip,
     "ttl": 60,         # 1-minute ultra-fast propagation
     "proxied": False   # Required for OpenVPN UDP 1194 direct connectivity

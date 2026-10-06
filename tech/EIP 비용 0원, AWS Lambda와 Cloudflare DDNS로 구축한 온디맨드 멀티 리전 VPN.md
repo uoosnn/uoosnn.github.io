@@ -39,7 +39,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
                  ▼                                                                               ▼
      [AWS EC2 (도쿄 / 버지니아)]                                                    [Cloudflare DNS REST API (무료)]
       1. ec2.start_instances()                                                       3. PATCH /dns_records
-      2. 신규 Public IP 할당 대기                                                     4. vpn-tokyo.uoosnn.com A 레코드 갱신
+      2. 신규 Public IP 할당 대기                                                     4. vpn-tokyo.example.com A 레코드 갱신
                  │                                                                               │
                  └───────────────────────────────────────┬───────────────────────────────────────┘
                                                          ▼
@@ -48,7 +48,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
 ```
 
 ### 아키텍처 핵심 포인트
-* **영구 고정 `.ovpn` 프로필**: 클라이언트 설정 파일(`*.ovpn`)에 IP 대신 `remote vpn-tokyo.uoosnn.com 1194`를 1회만 등록해 두면, 인스턴스가 켜질 때마다 IP가 바뀌어도 클라이언트 설정을 재수정하거나 재다운로드할 필요가 없다.
+* **영구 고정 `.ovpn` 프로필**: 클라이언트 설정 파일(`*.ovpn`)에 IP 대신 `remote vpn-tokyo.example.com 1194`를 1회만 등록해 두면, 인스턴스가 켜질 때마다 IP가 바뀌어도 클라이언트 설정을 재수정하거나 재다운로드할 필요가 없다.
 * **초경량 배포 패키지 (0.77 MB)**: 무거운 텔레그램 SDK 대신 경량 `requests`를 채택하고 `manylinux2014_x86_64` 바이너리로 패키징하여 콜드 스타트 지연을 100ms 이내로 단축했다.
 
 ---
@@ -68,7 +68,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
   "service": "aws-vpn-telegram-bot",
   "status": "online",
   "config_check": {
-    "ALLOWED_CHAT_ID": 8771073288,
+    "ALLOWED_CHAT_ID": 123456789,
     "TELEGRAM_BOT_TOKEN_SET": true,
     "CLOUDFLARE_API_TOKEN_SET": false, // <-- 원인 규명!
     "AWS_TOKYO_INSTANCE_ID_SET": true
@@ -85,7 +85,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
 # Cloudflare DNS A 레코드 갱신 핵심 로직
 payload = {
     "type": "A",
-    "name": "vpn-tokyo.uoosnn.com",
+    "name": "vpn-tokyo.example.com",
     "content": new_public_ip,
     "ttl": 60,         # 1분 초고속 DNS 전파
     "proxied": False   # OpenVPN(UDP 1194) 직접 연결을 위해 필수!

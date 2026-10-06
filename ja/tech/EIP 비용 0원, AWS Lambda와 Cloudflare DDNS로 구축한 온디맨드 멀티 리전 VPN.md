@@ -39,7 +39,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
                  ▼                                                                               ▼
      [AWS EC2 (東京 / バージニア)]                                                  [Cloudflare DNS REST API (無料)]
       1. ec2.start_instances()                                                       3. PATCH /dns_records
-      2. 新規パブリックIPの割り当て待機                                              4. vpn-tokyo.uoosnn.com Aレコード更新
+      2. 新規パブリックIPの割り当て待機                                              4. vpn-tokyo.example.com Aレコード更新
                  │                                                                               │
                  └───────────────────────────────────────┬───────────────────────────────────────┘
                                                          ▼
@@ -48,7 +48,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
 ```
 
 ### アーキテクチャの重要ポイント
-* **永久固定 `.ovpn` プロファイル**：設定ファイルにIPではなく `remote vpn-tokyo.uoosnn.com 1194` を一度だけ記述しておけば、IPが変わってもプロファイルを再インポートする必要がない。
+* **永久固定 `.ovpn` プロファイル**：設定ファイルにIPではなく `remote vpn-tokyo.example.com 1194` を一度だけ記述しておけば、IPが変わってもプロファイルを再インポートする必要がない。
 * **超軽量デプロイパッケージ (0.77 MB)**：重いTelegram SDKの代わりに軽量な `requests` を採用し、`manylinux2014_x86_64` バイナリでパッケージングしてコールドスタート遅延を100ms以内に抑えた。
 
 ---
@@ -68,7 +68,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
   "service": "aws-vpn-telegram-bot",
   "status": "online",
   "config_check": {
-    "ALLOWED_CHAT_ID": 8771073288,
+    "ALLOWED_CHAT_ID": 123456789,
     "TELEGRAM_BOT_TOKEN_SET": true,
     "CLOUDFLARE_API_TOKEN_SET": false, // <-- 原因を即座に特定！
     "AWS_TOKYO_INSTANCE_ID_SET": true
@@ -85,7 +85,7 @@ tags: [AWS, EC2, OpenVPN, Cloudflare, DDNS, Lambda, Serverless, Telegram, Troubl
 # Cloudflare DNS Aレコード更新ペイロード
 payload = {
     "type": "A",
-    "name": "vpn-tokyo.uoosnn.com",
+    "name": "vpn-tokyo.example.com",
     "content": new_public_ip,
     "ttl": 60,         # 1分間の超高速DNS伝播
     "proxied": False   # OpenVPN (UDP 1194) 直接通信に必須！
