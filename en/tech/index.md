@@ -51,6 +51,7 @@ The fully automated, zero-cost serverless architecture and multilingual static p
 
 | Article Title | Key Focus | Date |
 |:---|:---|:---:|
+| [$0 EIP Cost: Building an On-Demand Multi-Region VPN with AWS Lambda & Cloudflare DDNS](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | Avoiding EIP fees, Cloudflare free DNS API automation, and Telegram+Lambda serverless control | 2026-10-07 |
 | [Enhancing VitePress Blog: Notion-Style Tags and Project Showcase](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | Notion-style tag badges, build-time data loaders, 4-project showcase, and CI/CD alerts | 2026-08-23 |
 | [Migrating Telegram Bot to AWS Lambda $0 Serverless: Troubleshooting Review](./상시%20서버%20텔레그램%20봇을%20AWS%20Lambda%200원%20서버리스로%20전환한%20실전%20트러블슈팅%20후기.md) | Achieving $0 VM cost, Lambda Function URL + DynamoDB session handling, and real troubleshooting | 2026-08-23 |
 | [Building a Multilingual Blog with VitePress](./VitePress-다국어-블로그-구축기.md) | Setting up trilingual (KO/EN/JA) routing, custom dark theme, and components with VitePress | 2026-05-16 |

@@ -51,6 +51,7 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 記事タイトル | 主要テーマ | 投稿日 |
 |:---|:---|:---:|
+| [EIP費用0円！AWS LambdaとCloudflare DDNSで構築したオンデマンド・マルチリージョンVPN](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | EIP待機課金回避、Cloudflare無料DNS API更新およびTelegram+Lambdaサーバーレス制御 | 2026-10-07 |
 | [静的ブログ(VitePress)高度化：Notion風タグとプロジェクトショーケース構築記](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | Notion風タグバッジ、ビルド時データローダー、4大プロジェクトショーケースおよびCI/CD通知構築 | 2026-08-23 |
 | [常時サーバーTelegramボットをAWS Lambda 0円サーバーレスへ移行した実戦トラブルシューティング](./상시%20서버%20텔레그램%20봇을%20AWS%20Lambda%200원%20서버리스로%20전환한%20실전%20트러블슈팅%20후기.md) | 常時VM費用0円達成、Lambda Function URL + DynamoDBセッション管理および実戦トラブルシューティング | 2026-08-23 |
 | [VitePress多言語ブログ構築記](./VitePress-다국어-블로그-구축기.md) | VitePressベースの3言語（KO/EN/JA）ルーティング、カスタムダークテーマおよびコンポーネント設計 | 2026-05-16 |

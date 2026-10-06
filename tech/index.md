@@ -51,6 +51,7 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 아티클 제목 | 핵심 주제 | 게시일 |
 |:---|:---|:---:|
+| [EIP 비용 0원, AWS Lambda와 Cloudflare DDNS로 구축한 온디맨드 멀티 리전 VPN](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | EIP 과금 회피, Cloudflare 무료 DNS API 갱신 및 Telegram+Lambda 서버리스 제어 | 2026-10-07 |
 | [정적 블로그(VitePress) 고도화: 노션 스타일 태그와 프로젝트 쇼케이스 구축기](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | 노션 스타일 태그 뱃지, 빌드 타임 데이터 로더, 4대 프로젝트 쇼케이스 및 CI/CD 알림 구축 | 2026-08-23 |
 | [상시 서버 텔레그램 봇을 AWS Lambda 0원 서버리스로 전환한 실전 트러블슈팅 후기](./상시%20서버%20텔레그램%20봇을%20AWS%20Lambda%200원%20서버리스로%20전환한%20실전%20트러블슈팅%20후기.md) | 상시 VM 비용 0원 달성, Lambda Function URL + DynamoDB 세션 관리 및 실전 트러블슈팅 | 2026-08-23 |
 | [VitePress 다국어 블로그 구축기](./VitePress-다국어-블로그-구축기.md) | VitePress 기반 3개 국어(KO/EN/JA) 라우팅, 커스텀 다크 테마 및 컴포넌트 설계 | 2026-05-16 |
