@@ -1,39 +1,27 @@
 ---
-title: "Automating Proxmox Monitoring Stack Deployment with Terraform and Cloud-init"
-description: "This post details a configuration example for automatically deploying a monitoring stack (Prometheus, Grafana, Loki, etc.) via Docker Compose using cloud-init scripts when creating Proxmox VMs, leveraging Terraform's `proxmox_virtual_environment_file` resource."
+title: "Automating Proxmox Monitoring VM Deployment with Terraform and cloud-init"
+description: "This post details how to create a Proxmox VM using Terraform's `proxmox_virtual_environment_file` resource and automatically configure a Docker-based Prometheus, Grafana, and Loki stack with cloud-init."
 date: 2026-10-20
 tags: [Tech, Automation, Cloud, Linux, Architecture]
 ---
 
-# Automating Proxmox Monitoring Stack Deployment with Terraform and Cloud-init
+# Automating Proxmox Monitoring VM Deployment with Terraform and cloud-init
 
 ::: tip TL;DR
-By injecting cloud-init configurations into the Terraform `proxmox_virtual_environment_file` resource, we can automatically set up a Docker Compose-based Prometheus, Grafana, and Loki monitoring environment concurrently with Proxmox VM provisioning.
+This post covers how to automatically deploy a Docker-based Prometheus and Grafana monitoring stack at the time of Proxmox VM creation, leveraging Terraform's `proxmox_virtual_environment_file` resource and cloud-init.
 :::
 
 ## Overview
 
-The goal is to set up a test virtual machine cluster in a Proxmox environment, designate one of these VMs as a monitoring server, and automatically deploy a Prometheus, Grafana, and Loki stack. By combining Terraform's Proxmox Provider with cloud-init, we manage the entire process, from VM creation to application deployment, as code.
+When building a test virtual machine cluster in a Proxmox environment, manually setting up the monitoring stack can be repetitive and inefficient. This document outlines how to automate the entire process, from creating a VM (`vm1-monitor`) dedicated to monitoring, to deploying the Prometheus, Grafana, and Loki monitoring stack, by combining Terraform and cloud-init.
 
-## Terraform Variable Definition
+## Terraform and cloud-init Configuration
 
-We declare the entire list of VMs to be used in the project as Terraform variables to ensure consistent management. Each VM has a unique `vmid`, hardware specifications (`cores`, `memory`), and a `role`. In this configuration, we'll focus on the `vm1-monitor` VM's setup.
+Terraform's `proxmox_virtual_environment_file` resource allows you to automate initial setup by injecting cloud-init scripts at the time of VM creation. The cloud-init script defined within the `source_raw` block will execute on the VM's first boot.
 
-```terraform
-variable "lab_vms" {
-  default = {
-    "vm1-monitor" = { vmid = 501, cores = 2, memory = 2048, ip = "", role = "monitor" }
-    "vm2-lb"      = { vmid = 502, cores = 1, memory = 1024, ip = "", role = "node" }
-    "vm3-web1"    = { vmid = 503, cores = 1, memory = 1024, ip = "", role = "node" }
-    "vm4-web2"    = { vmid = 504, cores = 1, memory = 1024, ip = "", role = "node" }
-    "vm5-data"    = { vmid = 505, cores = 1, memory = 2048, ip = "", role = "node" }
-  }
-}
-```
+### 1. Defining the Terraform Resource
 
-## Automating VM Provisioning with Cloud-init
-
-We use the `proxmox_virtual_environment_file` resource to create a cloud-init user data file in the Proxmox datastore. This file will execute when the monitoring VM boots, automatically handling all tasks from system configuration and package installation to creating configuration files and running Docker containers.
+We'll use the `proxmox_virtual_environment_file` resource to upload a cloud-init script file named `user-data-monitor.yaml` to Proxmox storage (`snippets` on `local`). This file will then be referenced during VM creation.
 
 ```terraform
 resource "proxmox_virtual_environment_file" "monitor_user_data" {
@@ -43,137 +31,121 @@ resource "proxmox_virtual_environment_file" "monitor_user_data" {
   source_raw {
     data      = <<-EOF
     #cloud-config
-    hostname: vm1-monitor
-    fqdn: vm1-monitor.lab
-    manage_etc_hosts: true
-    users:
-      - name: root
-        ssh_authorized_keys:
-          - "ssh-ed25519..."
-    chpasswd:
-      list: |
-        root:password
-      expire: false
-    package_update: true
-    packages:
-      - curl
-      - tar
-      - wget
-      - dnf-plugins-core
-
-    write_files:
-      # Prometheus configuration file
-      - path: /opt/monitoring/prometheus.yml
-        permissions: '0644'
-        content: |
-          global:
-            scrape_interval: 5s
-          scrape_configs:
-            - job_name: 'proxmox-cluster'
-              static_configs:
-                - targets: ['10.0.0.100:9100']
-                  labels:
-                    instance: 'vm1-monitor'
-                - targets: ['10.0.0.101:9100']
-                  labels:
-                    instance: 'vm2-lb'
-                # ... (other targets)
-
-      # Grafana datasource provisioning
-      - path: /opt/monitoring/provisioning/datasources/datasources.yml
-        permissions: '0644'
-        content: |
-          apiVersion: 1
-          datasources:
-            - name: Prometheus
-              type: prometheus
-              access: proxy
-              url: http://prometheus:9090
-              isDefault: true
-            - name: Loki
-              type: loki
-              access: proxy
-              url: http://loki:3100
-
-      # Docker Compose file
-      - path: /opt/monitoring/docker-compose.yml
-        permissions: '0644'
-        content: |
-          version: '3.8'
-          services:
-            prometheus:
-              image: prom/prometheus:latest
-              container_name: prometheus
-              restart: always
-              volumes:
-                - /opt/monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
-              ports:
-                - "9090:9090"
-              networks:
-                - monitoring
-
-            loki:
-              image: grafana/loki:latest
-              container_name: loki
-              restart: always
-              ports:
-                - "3100:3100"
-              command: -config.file=/etc/loki/local-config.yaml
-              networks:
-                - monitoring
-
-            grafana:
-              image: grafana/grafana:latest
-              container_name: grafana
-              restart: always
-              ports:
-                - "3000:3000"
-              environment:
-                - GF_SECURITY_ADMIN_PASSWORD=admin
-              volumes:
-                - /opt/monitoring/provisioning/datasources:/etc/grafana/provisioning/datasources
-              networks:
-                - monitoring
-
-            node_exporter:
-              image: prom/node-exporter:latest
-              container_name: node_exporter
-              restart: always
-              network_mode: host
-              pid: host
-              volumes:
-                - /:/host:ro,rslave
-              command:
-                - --path.rootfs=/host
-
-          networks:
-            monitoring:
-              driver: bridge
-
-    runcmd:
-      - systemctl stop firewalld || true
-      - systemctl disable firewalld || true
-      - dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-      - dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
-      - systemctl enable --now docker
-      - docker compose -f /opt/monitoring/docker-compose.yml up -d
+    # ... (cloud-init content below)
     EOF
     file_name = "user-data-monitor.yaml"
   }
 }
 ```
 
-### Cloud-init Configuration Analysis
+### 2. Detailed cloud-init Script Configuration
 
--   **`write_files`**: Pre-creates necessary configuration files inside the VM.
-    -   `prometheus.yml`: Statically defines the targets Prometheus will scrape.
-    -   `datasources.yml`: Configures Grafana to automatically register Prometheus and Loki as data sources upon startup.
-    -   `docker-compose.yml`: Defines all services comprising the monitoring stack (Prometheus, Loki, Grafana, Node Exporter) and connects them via the `monitoring` bridge network.
--   **`node_exporter` configuration**: To collect system metrics from the host VM itself, rather than just within the container, we use `network_mode: host` and `pid: host` options. Additionally, the host's root filesystem is mounted as `/host` in read-only mode to allow collecting comprehensive system information.
--   **`runcmd`**: A list of commands to be executed in the final stage of VM boot. This includes disabling the firewall, installing and enabling Docker, and running the monitoring stack in the background using the defined `docker-compose.yml` file.
+Tasks to be executed on VM boot are defined in YAML format under the `#cloud-config` directive.
 
-## Gotchas
+#### Basic System Setup and Package Installation
 
--   **Leveraging Cloud-init Snippets**: The `content_type = "snippets"` option in the `proxmox_virtual_environment_file` resource is key to utilizing Proxmox's snippet feature. This allows direct injection of cloud-init scripts within the Terraform code without needing a separate HTTP server.
--   **Node Exporter Host Metric Collection**: For accurate host monitoring, the `node_exporter` container must be configured with `network_mode: host` and the host's root filesystem (`/:/host:ro,rslave`) mounted. This setup allows it to collect system-wide metrics beyond the container's isolated environment.
--   **Automating Grafana Data Sources**: By pre-creating data source configuration files in Grafana's provisioning directory (`/etc/grafana/provisioning/datasources`) via `write_files`, Prometheus and Loki become immediately available for use when the Grafana container starts, without any manual intervention.
+Set the VM's hostname, FQDN, and specify the root user's SSH key and password. Then, perform a `package_update` and install `curl`, `tar`, `wget`, and Docker-related packages required for the monitoring stack deployment.
+
+```yaml
+#cloud-config
+hostname: vm1-monitor
+fqdn: vm1-monitor.lab
+manage_etc_hosts: true
+users:
+  - name: root
+    ssh_authorized_keys:
+      - "ssh-ed25519..."
+chpasswd:
+  list: |
+    root:password
+  expire: false
+package_update: true
+packages:
+  - curl
+  - tar
+  - wget
+  - dnf-plugins-core
+```
+
+#### Creating Configuration Files (`write_files`)
+
+The `write_files` module is used to pre-create configuration files for the Docker Compose-based monitoring stack within the VM, at the `/opt/monitoring` path.
+
+-   **/opt/monitoring/prometheus.yml**: Defines Prometheus's scrape targets. Currently, 5 VMs are specified using a static IP list.
+    ```yaml
+    global:
+      scrape_interval: 5s
+    scrape_configs:
+      - job_name: 'proxmox-cluster'
+        static_configs:
+          - targets: ['10.0.0.100:9100']
+            labels:
+              instance: 'vm1-monitor'
+          - targets: ['10.0.0.101:9100']
+            # ... other targets
+    ```
+
+-   **/opt/monitoring/provisioning/datasources/datasources.yml**: Configures Grafana to automatically register data sources upon startup. This eliminates the need to manually add Prometheus and Loki via the Grafana UI.
+    ```yaml
+    apiVersion: 1
+    datasources:
+      - name: Prometheus
+        type: prometheus
+        access: proxy
+        url: http://prometheus:9090
+        isDefault: true
+      - name: Loki
+        type: loki
+        access: proxy
+        url: http://loki:3100
+    ```
+
+-   **/opt/monitoring/docker-compose.yml**: Defines Prometheus, Grafana, Loki, and Node Exporter services as containers. Each service communicates via the `monitoring` bridge network.
+    ```yaml
+    version: '3.8'
+    services:
+      prometheus:
+        # ...
+      grafana:
+        # ...
+        volumes:
+          - /opt/monitoring/provisioning/datasources:/etc/grafana/provisioning/datasources
+      loki:
+        # ...
+      node_exporter:
+        image: prom/node-exporter:latest
+        container_name: node_exporter
+        restart: always
+        network_mode: host
+        pid: host
+        volumes:
+          - /:/host:ro,rslave
+        command:
+          - --path.rootfs=/host
+    networks:
+      monitoring:
+        driver: bridge
+    ```
+    `node_exporter` runs with `network_mode: host`, `pid: host` options, and mounts the host's root filesystem (`/`) to accurately collect system metrics from the host VM.
+
+#### Running Services (`runcmd`)
+
+After all files are created, the `runcmd` module sequentially executes the actual service installation and startup commands. It disables the firewall, adds the Docker repository, installs Docker and Docker Compose, then registers and enables them as system services. Finally, it uses the pre-created `docker-compose.yml` file to run the monitoring stack in the background.
+
+```yaml
+runcmd:
+  - systemctl stop firewalld || true
+  - systemctl disable firewalld || true
+  - dnf config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  - dnf install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+  - systemctl enable --now docker
+  - docker compose -f /opt/monitoring/docker-compose.yml up -d
+```
+
+## Key Takeaways (Gotchas)
+
+*   **Leveraging cloud-init**: Utilizing `cloud-init` at VM creation time allows for complete automation of initialization tasks such as package installation, configuration file creation, and service execution, ensuring a consistent environment.
+*   **Grafana Provisioning**: Grafana's Provisioning feature enables managing data sources and dashboards as code. By simply mounting configuration files as container volumes, configurations are automatically applied when Grafana starts, eliminating manual setup.
+*   **Node Exporter Host Mode**: For a containerized `node_exporter` to accurately collect metrics from the host system, permission settings such as `network_mode: host`, `pid: host`, and mounting the root filesystem (`--path.rootfs=/host`) are essential.
+
+*Posted: 2026-10-20 00:00:00*
