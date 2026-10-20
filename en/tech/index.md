@@ -51,6 +51,7 @@ The fully automated, zero-cost serverless architecture and multilingual static p
 
 | Article Title | Key Focus | Date |
 |:---|:---|:---:|
+| [Automating Monitoring Environment Setup with Proxmox and Terraform](./Proxmox%EC%99%80%20Terraform%EC%9C%BC%EB%A1%9C%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0.md) | This post covers a configuration example of automatically deploying a Prometheus, Grafana, and Loki monitoring stack with Docker Compose when creating Proxmox VMs, leveraging Terraform and cloud-init. | 2026-10-20 |
 | [$0 EIP Cost: Building an On-Demand Multi-Region VPN with AWS Lambda & Cloudflare DDNS](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | Avoiding EIP fees, Cloudflare free DNS API automation, and Telegram+Lambda serverless control | 2026-10-07 |
 | [Enhancing VitePress Blog: Notion-Style Tags and Project Showcase](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | Notion-style tag badges, build-time data loaders, 4-project showcase, and CI/CD alerts | 2026-08-23 |
 | [Migrating Telegram Bot to AWS Lambda $0 Serverless: Troubleshooting Review](./상시%20서버%20텔레그램%20봇을%20AWS%20Lambda%200원%20서버리스로%20전환한%20실전%20트러블슈팅%20후기.md) | Achieving $0 VM cost, Lambda Function URL + DynamoDB session handling, and real troubleshooting | 2026-08-23 |
