@@ -184,7 +184,17 @@ export default defineConfig({
       return items
         .filter(item => {
           const url = item.url;
-          return !url.endsWith('/README') && url !== 'README' && !url.includes('404');
+          if (url.endsWith('/README') || url === 'README' || url.includes('404')) return false;
+          // draft: true 또는 noindex: true가 설정된 비공개 문서는 사이트맵에서 자동 제외 (GSC noindex 충돌 방지)
+          const cleanUrl = decodeURIComponent(url).replace(/^\/+/, '').replace(/\/+$/, '');
+          if (cleanUrl) {
+            const mdCandidate = path.resolve(`${cleanUrl}.md`);
+            if (fs.existsSync(mdCandidate)) {
+              const mdContent = fs.readFileSync(mdCandidate, 'utf-8');
+              if (/^(draft|noindex):\s*true/im.test(mdContent)) return false;
+            }
+          }
+          return true;
         })
         .map(item => {
           const isHome = item.url === '' || item.url === 'ja/' || item.url === 'en/' || item.url === 'ja' || item.url === 'en';
@@ -494,4 +504,3 @@ export default defineConfig({
     }
   }
 })
-
