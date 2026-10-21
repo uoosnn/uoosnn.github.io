@@ -37,7 +37,6 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 아티클 제목 | 핵심 주제 | 게시일 |
 |:---|:---|:---:|
-| [대화 기록](./%EB%8C%80%ED%99%94%20%EA%B8%B0%EB%A1%9D.md) |  |  |
 | [실전 트러블슈팅: React2Shell (CVE-2025-55182) 침해 사고 분석 및 대응 후기](./실전%20트러블슈팅%20-%20React2Shell%20(CVE-2025-55182)%20침해%20사고%20분석%20및%20대응%20후기.md) | 원격 코드 실행(RCE) 침해 경로 역추적, 웹쉘 격리 및 방화벽 차단 긴급 대응 실무 | 2026-05-17 |
 | [로그 없는 아파치 SSL 오류, strace로 분석한 트러블슈팅](./로그%20없는%20아파치%20SSL%20오류,%20strace로%20분석.md) | 에러 로그 없는 Apache 크래시 현상을 `strace` 시스템 콜 추적으로 인증서 및 엔트로피 문제 규명 | 2026-05-21 |
 | [MSSQL 구성 관리자 오류, 공유 기능 복구로 해결하기](./MSSQL%20구성%20관리자%20오류,%20공유%20기능%20복구로%20해결하기.md) | WMI 공급자 오류로 인한 SQL Server Configuration Manager 실행 불가 시 MOF 재컴파일 복구 | 2026-07-20 |
@@ -52,7 +51,7 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 아티클 제목 | 핵심 주제 | 게시일 |
 |:---|:---|:---:|
-| [Terraform과 cloud-init으로 Proxmox 모니터링 환경 구축 자동화](./Terraform%EC%9C%BC%EB%A1%9C%20Proxmox%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%ED%99%94.md) | Proxmox VM 생성 시 Terraform과 cloud-init을 이용해 Prometheus, Grafana, Loki 등 모니터링 스택을 Docker Compose로 자동 배포하는 전체 설정 과정을 다룹니다. | 2026-10-21 |
+| [텔레그램 웹훅 중복 포스팅 버그 해결기: DynamoDB 멱등성, 비동기 자기 호출, Git Tree 단일 커밋](./%ED%85%94%EB%A0%88%EA%B7%B8%EB%9E%A8%20%EC%9B%B9%ED%9B%85%20%EC%A4%91%EB%B3%B5%20%ED%8F%AC%EC%8A%A4%ED%8C%85%20%EB%B2%84%EA%B7%B8%20%ED%95%B4%EA%B2%B0%EA%B8%B0%20DynamoDB%20%EB%A9%B1%EB%93%B1%EC%84%B1%EA%B3%BC%20%EB%B9%84%EB%8F%99%EA%B8%B0%20%EC%9B%8C%EC%BB%A4.md) | 웹훅 30초 타임아웃 재시도로 인한 중복 포스팅을 DynamoDB 조건부 쓰기, 비동기 워커 호출, Git Tree API 단일 커밋으로 해결 | 2026-10-21 |
 | [Terraform과 Cloud-init으로 Proxmox 모니터링 스택 구축 자동화](./Terraform%EC%9C%BC%EB%A1%9C%20Proxmox%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95.md) | Terraform의 proxmox_virtual_environment_file 리소스를 활용하여, cloud-init 스크립트로 Proxmox VM 생성 시 Prometheus, Grafana, Loki 등 모니터링 스택을 Docker Compose로 자동 배포하는 구성 사례입니다. | 2026-10-20 |
 | [EIP 비용 0원, AWS Lambda와 Cloudflare DDNS로 구축한 온디맨드 멀티 리전 VPN](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | EIP 과금 회피, Cloudflare 무료 DNS API 갱신 및 Telegram+Lambda 서버리스 제어 | 2026-10-07 |
 | [정적 블로그(VitePress) 고도화: 노션 스타일 태그와 프로젝트 쇼케이스 구축기](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | 노션 스타일 태그 뱃지, 빌드 타임 데이터 로더, 4대 프로젝트 쇼케이스 및 CI/CD 알림 구축 | 2026-08-23 |

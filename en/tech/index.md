@@ -37,7 +37,6 @@ Rigorous troubleshooting case studies resolving silent daemon crashes, hardware 
 
 | Article Title | Key Focus | Date |
 |:---|:---|:---:|
-| [No Conversation History](./%EB%8C%80%ED%99%94%20%EA%B8%B0%EB%A1%9D.md) | Please start a conversation first. |  |
 | [Troubleshooting: React2Shell (CVE-2025-55182) Incident Analysis & Response](./실전%20트러블슈팅%20-%20React2Shell%20(CVE-2025-55182)%20침해%20사고%20분석%20및%20대응%20후기.md) | Remote Code Execution (RCE) root cause analysis, webshell quarantine, and emergency firewall response | 2026-05-17 |
 | [Troubleshooting Logless Apache SSL Crashes with strace](./로그%20없는%20아파치%20SSL%20오류,%20strace로%20분석.md) | Diagnosing silent Apache startup crashes using `strace` to identify certificate permission and entropy issues | 2026-05-21 |
 | [Fixing MSSQL Configuration Manager Errors via Shared Feature Repair](./MSSQL%20구성%20관리자%20오류,%20공유%20기능%20복구로%20해결하기.md) | Resolving WMI provider errors in SQL Server Configuration Manager by recompiling MOF files | 2026-07-20 |
@@ -52,7 +51,7 @@ The fully automated, zero-cost serverless architecture and multilingual static p
 
 | Article Title | Key Focus | Date |
 |:---|:---|:---:|
-| [Automating Proxmox Monitoring Setup with Terraform and cloud-init](./Terraform%EC%9C%BC%EB%A1%9C%20Proxmox%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%ED%99%94.md) | This post covers the complete setup process for automatically deploying a monitoring stack (Prometheus, Grafana, Loki, etc.) using Docker Compose when creating Proxmox VMs with Terraform and cloud-init. | 2026-10-21 |
+| [Fixing Duplicate Telegram Webhook Posts: DynamoDB Idempotency, Async Self-Invocation, and Git Tree Atomic Commits](./%ED%85%94%EB%A0%88%EA%B7%B8%EB%9E%A8%20%EC%9B%B9%ED%9B%85%20%EC%A4%91%EB%B3%B5%20%ED%8F%AC%EC%8A%A4%ED%8C%85%20%EB%B2%84%EA%B7%B8%20%ED%95%B4%EA%B2%B0%EA%B8%B0%20DynamoDB%20%EB%A9%B1%EB%93%B1%EC%84%B1%EA%B3%BC%20%EB%B9%84%EB%8F%99%EA%B8%B0%20%EC%9B%8C%EC%BB%A4.md) | Resolving duplicate posts from Telegram's 30s webhook timeout retries via DynamoDB conditional writes, async self-invocation, and Git Tree single commits | 2026-10-21 |
 | [Automating Proxmox Monitoring Stack Deployment with Terraform and Cloud-init](./Terraform%EC%9C%BC%EB%A1%9C%20Proxmox%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95.md) | This post details a configuration example for automatically deploying a monitoring stack (Prometheus, Grafana, Loki, etc.) via Docker Compose using cloud-init scripts when creating Proxmox VMs, leveraging Terraform | 2026-10-20 |
 | [$0 EIP Cost: Building an On-Demand Multi-Region VPN with AWS Lambda & Cloudflare DDNS](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | Avoiding EIP fees, Cloudflare free DNS API automation, and Telegram+Lambda serverless control | 2026-10-07 |
 | [Enhancing VitePress Blog: Notion-Style Tags and Project Showcase](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | Notion-style tag badges, build-time data loaders, 4-project showcase, and CI/CD alerts | 2026-08-23 |
