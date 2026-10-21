@@ -51,9 +51,7 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 아티클 제목 | 핵심 주제 | 게시일 |
 |:---|:---|:---:|
-| [Proxmox와 Terraform으로 모니터링 환경 자동 구축](./Proxmox%EC%99%80%20Terraform%EC%9C%BC%EB%A1%9C%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95.md) | Terraform과 cloud-init을 사용하여 Proxmox VM 생성 시, Docker 기반의 Prometheus 및 Grafana 모니터링 스택을 자동으로 배포하는 전체 구성 과정을 기록합니다. | 2026-10-20 |
 | [Terraform과 Cloud-init으로 Proxmox 모니터링 스택 구축 자동화](./Terraform%EC%9C%BC%EB%A1%9C%20Proxmox%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95.md) | Terraform의 proxmox_virtual_environment_file 리소스를 활용하여, cloud-init 스크립트로 Proxmox VM 생성 시 Prometheus, Grafana, Loki 등 모니터링 스택을 Docker Compose로 자동 배포하는 구성 사례입니다. | 2026-10-20 |
-| [Proxmox와 Terraform으로 모니터링 환경 자동 구축하기](./Proxmox%EC%99%80%20Terraform%EC%9C%BC%EB%A1%9C%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95%ED%95%98%EA%B8%B0.md) | Terraform과 cloud-init을 활용하여 Proxmox VM 생성 시 Prometheus, Grafana, Loki 모니터링 스택을 Docker Compose로 자동 배포하는 구성 사례를 다룹니다. | 2026-10-20 |
 | [EIP 비용 0원, AWS Lambda와 Cloudflare DDNS로 구축한 온디맨드 멀티 리전 VPN](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | EIP 과금 회피, Cloudflare 무료 DNS API 갱신 및 Telegram+Lambda 서버리스 제어 | 2026-10-07 |
 | [정적 블로그(VitePress) 고도화: 노션 스타일 태그와 프로젝트 쇼케이스 구축기](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | 노션 스타일 태그 뱃지, 빌드 타임 데이터 로더, 4대 프로젝트 쇼케이스 및 CI/CD 알림 구축 | 2026-08-23 |
 | [상시 서버 텔레그램 봇을 AWS Lambda 0원 서버리스로 전환한 실전 트러블슈팅 후기](./상시%20서버%20텔레그램%20봇을%20AWS%20Lambda%200원%20서버리스로%20전환한%20실전%20트러블슈팅%20후기.md) | 상시 VM 비용 0원 달성, Lambda Function URL + DynamoDB 세션 관리 및 실전 트러블슈팅 | 2026-08-23 |
