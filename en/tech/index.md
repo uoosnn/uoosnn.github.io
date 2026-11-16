@@ -37,6 +37,7 @@ Rigorous troubleshooting case studies resolving silent daemon crashes, hardware 
 
 | Article Title | Key Focus | Date |
 |:---|:---|:---:|
+| [Addressing and Mitigating the PHP2Shell Vulnerability (CVE-2026-109619)](./PHP2Shell%20%EC%B7%A8%EC%95%BD%EC%A0%90%20%EB%8C%80%EC%9D%91%20%EB%B0%8F%20%EC%99%84%ED%99%94%20%EC%A1%B0%EC%B9%98.md) | This post analyzes the root cause of the PHP2Shell vulnerability, which arises from a `longjmp()` handling flaw during Out-of-Memory (OOM) errors in PHP. It also covers step-by-step mitigation measures, including configuration changes and WAF application, for environments where immediate patching is not feasible. | 2026-11-16 |
 | [Troubleshooting: React2Shell (CVE-2025-55182) Incident Analysis & Response](./실전%20트러블슈팅%20-%20React2Shell%20(CVE-2025-55182)%20침해%20사고%20분석%20및%20대응%20후기.md) | Remote Code Execution (RCE) root cause analysis, webshell quarantine, and emergency firewall response | 2026-05-17 |
 | [Troubleshooting Logless Apache SSL Crashes with strace](./로그%20없는%20아파치%20SSL%20오류,%20strace로%20분석.md) | Diagnosing silent Apache startup crashes using `strace` to identify certificate permission and entropy issues | 2026-05-21 |
 | [Fixing MSSQL Configuration Manager Errors via Shared Feature Repair](./MSSQL%20구성%20관리자%20오류,%20공유%20기능%20복구로%20해결하기.md) | Resolving WMI provider errors in SQL Server Configuration Manager by recompiling MOF files | 2026-07-20 |
