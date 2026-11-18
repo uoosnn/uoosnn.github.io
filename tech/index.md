@@ -53,6 +53,7 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 아티클 제목 | 핵심 주제 | 게시일 |
 |:---|:---|:---:|
+| [AWS Lambda Function URL 재생성 후 403 Forbidden 에러 분석](./AWS%20Lambda%20URL%20%EB%B3%B4%EC%95%88%EA%B3%BC%20403%20%EC%97%90%EB%9F%AC%20%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85.md) | AWS Lambda Function URL을 보안상 삭제 후 재생성 시 AWS 콘솔 캐시 버그로 인해 리소스 기반 정책이 누락되어 403 Forbidden 에러가 발생하는 현상을 분석하고, 브라우저 새로고침을 통한 해결 및 코드 레벨 검증 로직 추가 과정을 다룹니다. | 2026-11-18 |
 | [텔레그램 웹훅 중복 포스팅 버그 해결기: DynamoDB 멱등성, 비동기 자기 호출, Git Tree 단일 커밋](./%ED%85%94%EB%A0%88%EA%B7%B8%EB%9E%A8%20%EC%9B%B9%ED%9B%85%20%EC%A4%91%EB%B3%B5%20%ED%8F%AC%EC%8A%A4%ED%8C%85%20%EB%B2%84%EA%B7%B8%20%ED%95%B4%EA%B2%B0%EA%B8%B0%20DynamoDB%20%EB%A9%B1%EB%93%B1%EC%84%B1%EA%B3%BC%20%EB%B9%84%EB%8F%99%EA%B8%B0%20%EC%9B%8C%EC%BB%A4.md) | 웹훅 30초 타임아웃 재시도로 인한 중복 포스팅을 DynamoDB 조건부 쓰기, 비동기 워커 호출, Git Tree API 단일 커밋으로 해결 | 2026-10-21 |
 | [Terraform과 Cloud-init으로 Proxmox 모니터링 스택 구축 자동화](./Terraform%EC%9C%BC%EB%A1%9C%20Proxmox%20%EB%AA%A8%EB%8B%88%ED%84%B0%EB%A7%81%20%ED%99%98%EA%B2%BD%20%EC%9E%90%EB%8F%99%20%EA%B5%AC%EC%B6%95.md) | Terraform의 proxmox_virtual_environment_file 리소스를 활용하여, cloud-init 스크립트로 Proxmox VM 생성 시 Prometheus, Grafana, Loki 등 모니터링 스택을 Docker Compose로 자동 배포하는 구성 사례입니다. | 2026-10-20 |
 | [EIP 비용 0원, AWS Lambda와 Cloudflare DDNS로 구축한 온디맨드 멀티 리전 VPN](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | EIP 과금 회피, Cloudflare 무료 DNS API 갱신 및 Telegram+Lambda 서버리스 제어 | 2026-10-07 |

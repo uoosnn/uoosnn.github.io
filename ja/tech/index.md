@@ -53,6 +53,7 @@ tags: [Tech, Architecture, Infrastructure, Troubleshooting, Security, Serverless
 
 | 記事タイトル | 主要テーマ | 投稿日 |
 |:---|:---|:---:|
+| [AWS Lambda Function URL再生成後に発生した403 Forbiddenエラーの分析](./AWS%20Lambda%20URL%20%EB%B3%B4%EC%95%88%EA%B3%BC%20403%20%EC%97%90%EB%9F%AC%20%ED%8A%B8%EB%9F%AC%EB%B8%94%EC%8A%88%ED%8C%85.md) | AWS Lambda Function URLをセキュリティ上の理由で削除し再生成した際、AWSコンソールのキャッシュバグによりリソースベースポリシーが欠落し、403 Forbiddenエラーが発生する事象を分析します。ブラウザの再読み込みによる解決策と、コードレベルでの検証ロジック追加プロセスについて解説します。 | 2026-11-18 |
 | [Telegram Webhook重複投稿バグの解決記：DynamoDBべき等性制御、非同期自己呼び出し、Git Tree単一コミット](./%ED%85%94%EB%A0%88%EA%B7%B8%EB%9E%A8%20%EC%9B%B9%ED%9B%85%20%EC%A4%91%EB%B3%B5%20%ED%8F%AC%EC%8A%A4%ED%8C%85%20%EB%B2%84%EA%B7%B8%20%ED%95%B4%EA%B2%B0%EA%B8%B0%20DynamoDB%20%EB%A9%B1%EB%93%B1%EC%84%B1%EA%B3%BC%20%EB%B9%84%EB%8F%99%EA%B8%B0%20%EC%9B%8C%EC%BB%A4.md) | Webhook 30秒タイムアウト再試行による重複投稿をDynamoDB条件付き書き込み、非同期自己呼び出し、Git Tree単一コミットで解決 | 2026-10-21 |
 | [EIP費用0円！AWS LambdaとCloudflare DDNSで構築したオンデマンド・マルチリージョンVPN](./EIP%20비용%200원,%20AWS%20Lambda와%20Cloudflare%20DDNS로%20구축한%20온디맨드%20멀티%20리전%20VPN.md) | EIP待機課金回避、Cloudflare無料DNS API更新およびTelegram+Lambdaサーバーレス制御 | 2026-10-07 |
 | [静的ブログ(VitePress)高度化：Notion風タグとプロジェクトショーケース構築記](./정적-블로그-VitePress-고도화-노션-태그-프로젝트-쇼케이스-구축기.md) | Notion風タグバッジ、ビルド時データローダー、4大プロジェクトショーケースおよびCI/CD通知構築 | 2026-08-23 |
